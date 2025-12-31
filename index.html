@@ -1,11 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>WiFi Terminal Remote</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Web Client</title>
+
+    <!-- Stile opzionale -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Libreria MQTT Paho (WebSocket) -->
+    <script src="https://unpkg.com/paho-mqtt/mqttws31.min.js"></script>
+
+    <!-- Il tuo script MQTT -->
+    <script src="mqtt.js" defer></script>
 </head>
+
 <body>
-  <h1>WiFi Terminal Remote</h1>
-  <p>Pagina in costruzione...</p>
+
+    <h2>MQTT Web Client</h2>
+
+    <p>Stato connessione: <span id="status" style="font-weight:bold;">disconnesso</span></p>
+
+    <hr>
+
+    <h3>Invia un messaggio</h3>
+    <input id="msg" type="text" placeholder="Scrivi un messaggio..." style="width:60%;">
+    <button onclick="publishMessage()">Invia</button>
+
+    <hr>
+
+    <h3>Ultimo messaggio ricevuto</h3>
+    <pre id="received" style="background:#eee; padding:10px; min-height:50px;"></pre>
+
 </body>
 </html>
+
