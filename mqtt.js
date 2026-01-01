@@ -1,3 +1,10 @@
+
+let deviceID = null;
+let topic_pub = null;   // ESP → GitHub
+let topic_sub = null;   // GitHub → ESP
+
+const announce_topic = "wifi_terminal/announce";
+
 // ===============================
 // CONFIGURAZIONE MQTT
 // ===============================
@@ -7,8 +14,7 @@ const broker = "test.mosquitto.org";
 const port = 8081;   // Porta WebSocket MQTT (non 1883)
 
 // Topic definitivi
-const topic_pub = "wifi_terminal/test/out";
-const topic_sub = "wifi_terminal/test/in";
+
 
 // ===============================
 // CREAZIONE CLIENT MQTT
@@ -32,11 +38,33 @@ client.onConnectionLost = function(responseObject) {
 
 // Messaggio ricevuto
 client.onMessageArrived = function(message) {
-    console.log("Messaggio arrivato:", message.payloadString);
+    const payload = message.payloadString;
 
-    document.getElementById("received").innerText =
-        "Topic: " + message.destinationName + "\n" +
-        "Payload: " + message.payloadString;
+    // Rilevamento automatico del dispositivo
+    if (message.destinationName === announce_topic &&
+        payload.startsWith("HELLO:")) {
+
+        deviceID = payload.substring(6);  // estrae l'ID
+        console.log("Dispositivo rilevato:", deviceID);
+
+        // Costruzione dei topic personalizzati
+        topic_pub = "wifi_terminal/" + deviceID + "/out";
+        topic_sub = "wifi_terminal/" + deviceID + "/in";
+
+        // Iscrizione al topic del dispositivo
+        client.subscribe(topic_pub);
+
+        // Aggiornamento UI
+        document.getElementById("deviceIdLabel").innerText = deviceID;
+
+        return;
+    }
+
+    // Gestione messaggi normali
+    if (message.destinationName === topic_pub) {
+        console.log("Messaggio dal dispositivo:", payload);
+        document.getElementById("lastMessage").innerText = payload;
+    }
 };
 
 // ===============================
@@ -52,8 +80,8 @@ function connectMQTT() {
             document.getElementById("status").innerText = "connesso";
 
             // Iscrizione al topic
-            client.subscribe(topic_sub);
-            console.log("Sottoscritto a:", topic_sub);
+            client.subscribe(announce_topic);
+            console.log("Sottoscritto a:", announce_topic);
         },
         onFailure: function(err) {
             console.error("Errore connessione:", err.errorMessage);
@@ -78,11 +106,24 @@ function publishMessage() {
         return;
     }
 
+    // 1. Verifica che il dispositivo sia stato rilevato
+    if (!deviceID) {
+        alert("Nessun dispositivo rilevato! Attendi l'annuncio HELLO:<ID>.");
+        return;
+    }
+
+    // 2. Verifica che il topic sia stato costruito
+    if (!topic_sub) {
+        alert("Topic non inizializzato. Attendi l'annuncio del dispositivo.");
+        return;
+    }
+
+    // 3. Crea e invia il messaggio MQTT
     let message = new Paho.MQTT.Message(text);
-    message.destinationName = topic_pub;
+    message.destinationName = topic_sub;
 
     client.send(message);
 
-    console.log("Pubblicato:", text);
+    console.log("Pubblicato su", topic_sub, ":", text);
 }
- 
+
