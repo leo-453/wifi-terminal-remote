@@ -3,35 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MQTT Web Client</title>
+    <title>WiFi Terminal – MQTT Web Client</title>
 
-    <!-- Stile opzionale -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Libreria MQTT Paho (WebSocket) -->
+    <!-- Libreria MQTT Paho -->
     <script src="https://unpkg.com/paho-mqtt/mqttws31.min.js"></script>
 
-    <!-- Il tuo script MQTT -->
+    <!-- Script MQTT -->
     <script src="mqtt.js" defer></script>
 </head>
 
 <body>
 
-    <h2>MQTT Web Client</h2>
+    <h2>WiFi Terminal – MQTT Web Client</h2>
 
-    <p>Stato connessione: <span id="status" style="font-weight:bold;">disconnesso</span></p>
+    <p>
+        Stato connessione:
+        <span id="status" style="font-weight:bold;">disconnesso</span>
+    </p>
 
     <hr>
 
+    <!-- Selettore dispositivi -->
+    <h3>Dispositivi rilevati</h3>
+    <select id="deviceList" onchange="selezionaDispositivo()" style="width:60%;">
+        <!-- Popolato dinamicamente da mqtt.js -->
+    </select>
+
+    <p>
+        Dispositivo selezionato:
+        <span id="selectedDevice" style="font-weight:bold;">nessuno</span>
+    </p>
+
+    <hr>
+
+    <!-- Invio messaggi -->
     <h3>Invia un messaggio</h3>
     <input id="msg" type="text" placeholder="Scrivi un messaggio..." style="width:60%;">
     <button onclick="publishMessage()">Invia</button>
 
     <hr>
 
+    <!-- Messaggi ricevuti -->
     <h3>Ultimo messaggio ricevuto</h3>
-    <pre id="received" style="background:#eee; padding:10px; min-height:50px;"></pre>
+    <pre id="lastMessage" style="background:#eee; padding:10px; min-height:50px;"></pre>
 
 </body>
 </html>
-
