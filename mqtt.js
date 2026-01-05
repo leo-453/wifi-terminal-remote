@@ -113,9 +113,6 @@ function onMessageArrived(topic, payload) {
         document.getElementById("lastMessage").innerText = payload;
     }
 }
-
-   
-
 // ---------------------------------------------------------
 // Aggiorna la lista dispositivi nella UI
 // ---------------------------------------------------------
