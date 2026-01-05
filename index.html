@@ -1,55 +1,32 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi Terminal – MQTT Web Client</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Libreria MQTT Paho -->
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
-
-
-    <!-- Script MQTT -->
-    <script src="mqtt.js" defer></script>
+  <meta charset="UTF-8">
+  <title>WiFi_Terminal Remoto</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
 </head>
-
 <body>
+  <h2>Stato connessione: <span id="status">disconnesso</span></h2>
 
-    <h2>WiFi Terminal – MQTT Web Client</h2>
+  <script>
+    const broker = "test.mosquitto.org";
+    const port = 8081;
 
-    <p>
-        Stato connessione:
-        <span id="status" style="font-weight:bold;">disconnesso</span>
-    </p>
+    let client = new Paho.MQTT.Client(broker, port, "webclient_" + Math.random());
 
-    <hr>
+    client.onConnectionLost = () => {
+      document.getElementById("status").innerText = "disconnesso";
+    };
 
-    <!-- Selettore dispositivi -->
-    <h3>Dispositivi rilevati</h3>
-    <select id="deviceList" onchange="selezionaDispositivo()" style="width:60%;">
-        <!-- Popolato dinamicamente da mqtt.js -->
-    </select>
-
-    <p>
-        Dispositivo selezionato:
-        <span id="selectedDevice" style="font-weight:bold;">nessuno</span>
-    </p>
-
-    <hr>
-
-    <!-- Invio messaggi -->
-    <h3>Invia un messaggio</h3>
-    <input id="msg" type="text" placeholder="Scrivi un messaggio..." style="width:60%;">
-    <button onclick="publishMessage()">Invia</button>
-
-    <hr>
-
-    <!-- Messaggi ricevuti -->
-    <h3>Ultimo messaggio ricevuto</h3>
-    <pre id="lastMessage" style="background:#eee; padding:10px; min-height:50px;"></pre>
-
+    client.connect({
+      onSuccess: () => {
+        document.getElementById("status").innerText = "connesso";
+      },
+      onFailure: () => {
+        document.getElementById("status").innerText = "errore";
+      },
+      useSSL: true
+    });
+  </script>
 </body>
 </html>
