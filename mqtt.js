@@ -24,17 +24,35 @@ let discoveredDevices = []; // lista dispositivi trovati
 function connectMQTT() {
     console.log("Connessione al broker MQTT...");
 
-    client = new Paho.MQTT.Client(broker, port, "webclient_" + Math.random());
+    client = mqtt.connect(`wss://${broker}:${port}`);
 
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
+    // Quando la connessione è stabilita
+    client.on('connect', () => {
+        console.log("Connesso al broker MQTT");
+        document.getElementById("status").innerText = "connesso";
 
-    client.connect({
-        onSuccess: onConnect,
-        onFailure: onFail,
-        useSSL: true
+        client.subscribe(announce_topic);
+        console.log("Sottoscritto a:", announce_topic);
+    });
+
+    // Quando arriva un messaggio
+    client.on('message', (topic, payload) => {
+        onMessageArrived(topic, payload.toString());
+    });
+
+    // Errori di connessione
+    client.on('error', (err) => {
+        console.error("Errore connessione:", err);
+        document.getElementById("status").innerText = "errore";
+    });
+
+    // Disconnessione
+    client.on('close', () => {
+        console.warn("Connessione persa");
+        document.getElementById("status").innerText = "disconnesso";
     });
 }
+
 
 
 // ---------------------------------------------------------
@@ -71,20 +89,15 @@ function onConnectionLost(responseObject) {
 // ---------------------------------------------------------
 // Gestione messaggi MQTT
 // ---------------------------------------------------------
-function onMessageArrived(message) {
-    const payload = message.payloadString;
+function onMessageArrived(topic, payload) {
 
-    // ------------------------------
     // Annuncio dispositivo
-    // ------------------------------
-    if (message.destinationName === announce_topic &&
-        payload.startsWith("HELLO:")) {
+    if (topic === announce_topic && payload.startsWith("HELLO:")) {
 
         const parts = payload.split(":");
         const id = parts[1];
         const name = parts[2] || "(senza nome)";
 
-        // Evita duplicati
         if (!discoveredDevices.some(d => d.id === id)) {
             discoveredDevices.push({ id, name });
             aggiornaListaDispositivi();
@@ -93,6 +106,13 @@ function onMessageArrived(message) {
         console.log("Dispositivo rilevato:", name, id);
         return;
     }
+
+    // Messaggi dal dispositivo selezionato
+    if (topic === topic_pub) {
+        console.log("RX:", payload);
+        document.getElementById("lastMessage").innerText = payload;
+    }
+}
 
     // ------------------------------
     // Messaggi dal dispositivo selezionato
@@ -160,10 +180,9 @@ function publishMessage() {
         return;
     }
 
-    let message = new Paho.MQTT.Message(text);
-    message.destinationName = topic_sub;
+    client.publish(topic_sub, text);
+console.log("TX su", topic_sub, ":", text);
 
-    client.send(message);
 
     console.log("TX su", topic_sub, ":", text);
 }
