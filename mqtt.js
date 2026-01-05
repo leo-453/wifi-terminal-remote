@@ -114,15 +114,7 @@ function onMessageArrived(topic, payload) {
     }
 }
 
-    // ------------------------------
-    // Messaggi dal dispositivo selezionato
-    // ------------------------------
-    if (message.destinationName === topic_pub) {
-        console.log("RX:", payload);
-        document.getElementById("lastMessage").innerText = payload;
-    }
-}
-
+   
 
 // ---------------------------------------------------------
 // Aggiorna la lista dispositivi nella UI
