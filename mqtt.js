@@ -130,10 +130,13 @@ function selezionaDispositivo() {
     const dev = discoveredDevices.find(d => d.id === deviceID);
     deviceName = dev.name;
 
-    topic_pub = "wifi_terminal/" + deviceID + "/out";
-    topic_sub = "wifi_terminal/" + deviceID + "/in";
+
+    topic_pub = "wifi_terminal/" + deviceID + "/rx";  // ESP → UI
+ topic_sub = "wifi_terminal/" + deviceID + "/tx";  // UI → ESP
+
 
     client.subscribe(topic_pub);
+
 
     console.log("Dispositivo selezionato:", deviceName, deviceID);
     document.getElementById("selectedDevice").innerText =
