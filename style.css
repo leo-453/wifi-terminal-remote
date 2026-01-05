@@ -5,13 +5,32 @@ body {
   padding: 20px;
 }
 
-h1 {
-  margin-bottom: 10px;
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  margin-top: 0;
+  color: #333;
 }
 
 #status {
   margin-bottom: 15px;
   font-weight: bold;
+}
+
+#lastMessage {
+  background: #222;
+  color: #0f0;
+  padding: 10px;
+  min-height: 80px;
+  border-radius: 4px;
+  font-family: monospace;
 }
 
 #log {
@@ -25,9 +44,14 @@ h1 {
   font-family: monospace;
 }
 
-input, button {
+input, button, select {
   padding: 8px;
   margin: 5px 0;
+  border-radius: 4px;
+}
+
+input, select {
+  border: 1px solid #ccc;
 }
 
 button {
@@ -39,4 +63,12 @@ button {
 
 button:hover {
   background: #45a049;
+}
+
+button.connect {
+  background: #2196f3;
+}
+
+button.connect:hover {
+  background: #1976d2;
 }
