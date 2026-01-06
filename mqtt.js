@@ -134,27 +134,31 @@ function aggiornaListaDispositivi() {
 // ---------------------------------------------------------
 function selezionaDispositivo() {
     const sel = document.getElementById("deviceList");
+
+    // ID del dispositivo = value dell'opzione selezionata
     deviceID = sel.value;
 
-    // 🔍 Cerca il dispositivo con confronto sicuro
-    const dev = discoveredDevices.find(d => String(d.id) === String(deviceID));
-    if (!dev) {
-        console.warn("Dispositivo non trovato:", deviceID);
+    // Se per qualche motivo non c'è valore, esci
+    if (!deviceID) {
+        console.warn("Nessun deviceID selezionato");
         document.getElementById("selectedDevice").innerText = "nessuno";
         return;
     }
 
-    deviceName = dev.name;
+    // Nome dispositivo = testo dell'opzione (prima della parentesi)
+    const fullLabel = sel.options[sel.selectedIndex].textContent;  // es: "proto2 (966941)"
+    deviceName = fullLabel.split(" (")[0];                         // -> "proto2"
 
-    // 🔧 Costruzione dei topic
+    // Costruzione dei topic
     topic_pub = "wifi_terminal/" + deviceID + "/rx";  // ESP → UI
     topic_sub = "wifi_terminal/" + deviceID + "/tx";  // UI → ESP
 
-    // 🔔 Sottoscrizione al topic di ricezione
+    // Sottoscrizione al topic di ricezione
     client.subscribe(topic_pub);
 
-    // ✅ Aggiornamento UI
     console.log("Dispositivo selezionato:", deviceName, deviceID);
+
+    // Aggiornamento UI
     document.getElementById("selectedDevice").innerText =
         `${deviceName} (${deviceID})`;
 }
