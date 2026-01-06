@@ -120,6 +120,12 @@ function aggiornaListaDispositivi() {
     const sel = document.getElementById("deviceList");
     sel.innerHTML = "";
 
+    // Aggiungi opzione vuota 
+    const empty = document.createElement("option"); 
+    empty.value = ""; 
+    empty.textContent = "-- seleziona un dispositivo --"; 
+    sel.appendChild(empty);
+    
     discoveredDevices.forEach(d => {
         const opt = document.createElement("option");
         opt.value = d.id;
