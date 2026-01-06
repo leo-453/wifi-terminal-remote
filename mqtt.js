@@ -192,3 +192,7 @@ console.log("TX su", topic_sub, ":", text);
 // Avvio automatico
 // ---------------------------------------------------------
 window.addEventListener("load", connectMQTT);
+window.selezionaDispositivo = selezionaDispositivo;
+window.publishMessage = publishMessage;
+
+
