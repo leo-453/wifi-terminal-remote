@@ -136,19 +136,24 @@ function selezionaDispositivo() {
     const sel = document.getElementById("deviceList");
     deviceID = sel.value;
 
-    const dev = discoveredDevices.find(d => d.id === deviceID || d.id === String(deviceID));
+    // 🔍 Cerca il dispositivo con confronto sicuro
+    const dev = discoveredDevices.find(d => String(d.id) === String(deviceID));
     if (!dev) {
         console.warn("Dispositivo non trovato:", deviceID);
+        document.getElementById("selectedDevice").innerText = "nessuno";
         return;
     }
 
     deviceName = dev.name;
 
-    topic_pub = "wifi_terminal/" + deviceID + "/rx";
-    topic_sub = "wifi_terminal/" + deviceID + "/tx";
+    // 🔧 Costruzione dei topic
+    topic_pub = "wifi_terminal/" + deviceID + "/rx";  // ESP → UI
+    topic_sub = "wifi_terminal/" + deviceID + "/tx";  // UI → ESP
 
+    // 🔔 Sottoscrizione al topic di ricezione
     client.subscribe(topic_pub);
 
+    // ✅ Aggiornamento UI
     console.log("Dispositivo selezionato:", deviceName, deviceID);
     document.getElementById("selectedDevice").innerText =
         `${deviceName} (${deviceID})`;
