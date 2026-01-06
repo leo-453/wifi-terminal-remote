@@ -136,16 +136,18 @@ function selezionaDispositivo() {
     const sel = document.getElementById("deviceList");
     deviceID = sel.value;
 
-    const dev = discoveredDevices.find(d => d.id === deviceID);
+    const dev = discoveredDevices.find(d => d.id === deviceID || d.id === String(deviceID));
+    if (!dev) {
+        console.warn("Dispositivo non trovato:", deviceID);
+        return;
+    }
+
     deviceName = dev.name;
 
-
-    topic_pub = "wifi_terminal/" + deviceID + "/rx";  // ESP → UI
- topic_sub = "wifi_terminal/" + deviceID + "/tx";  // UI → ESP
-
+    topic_pub = "wifi_terminal/" + deviceID + "/rx";
+    topic_sub = "wifi_terminal/" + deviceID + "/tx";
 
     client.subscribe(topic_pub);
-
 
     console.log("Dispositivo selezionato:", deviceName, deviceID);
     document.getElementById("selectedDevice").innerText =
