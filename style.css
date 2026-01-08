@@ -25,7 +25,7 @@ h2 {
 }
 
 #lastMessage {
-  background: red !important;
+  background: #222
   color: #40ff; /* blue */
   padding: 10px;
   min-height: 80px;
