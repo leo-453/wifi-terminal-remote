@@ -1,93 +1,76 @@
 // ---------------------------------------------------------
-// Configurazione broker MQTT (WebSocket)
+// CONFIGURAZIONE BROKER MQTT (WebSocket)
 // ---------------------------------------------------------
 const broker = "test.mosquitto.org";
-const port = 8081;   // WebSocket MQTT
+const port = 8081;
 
-// Topic di annuncio
 const announce_topic = "wifi_terminal/announce";
 
-// Variabili dinamiche
 let client = null;
+let mqttReady = false;
+
 let deviceID = null;
 let deviceName = null;
 
 let topic_pub = null;   // ESP → UI
 let topic_sub = null;   // UI → ESP
 
-let discoveredDevices = []; // lista dispositivi trovati
+let discoveredDevices = [];
 
 
 // ---------------------------------------------------------
-// Connessione al broker MQTT
+// CONNESSIONE AL BROKER MQTT
 // ---------------------------------------------------------
 function connectMQTT() {
     console.log("Connessione al broker MQTT...");
 
-    client = mqtt.connect(`wss://${broker}:${port}`);
+    client = mqtt.connect(`wss://${broker}:${port}`, {
+        reconnectPeriod: 2000,   // tenta reconnect ogni 2s
+        connectTimeout: 5000,    // timeout handshake
+        keepalive: 30            // ping ogni 30s
+    });
 
-    // Quando la connessione è stabilita
+    // Evento: connessione stabilita
     client.on('connect', () => {
-        console.log("Connesso al broker MQTT");
+        mqttReady = true;
+        console.log("MQTT connesso");
         document.getElementById("status").innerText = "connesso";
 
         client.subscribe(announce_topic);
         console.log("Sottoscritto a:", announce_topic);
     });
 
-    // Quando arriva un messaggio
-    client.on('message', (topic, payload) => {
-        onMessageArrived(topic, payload.toString());
+    // Evento: riconnessione in corso
+    client.on('reconnect', () => {
+        mqttReady = false;
+        console.warn("MQTT: riconnessione...");
+        document.getElementById("status").innerText = "riconnessione...";
     });
 
-    // Errori di connessione
+    // Evento: connessione chiusa
+    client.on('close', () => {
+        mqttReady = false;
+        console.warn("MQTT: connessione chiusa");
+        document.getElementById("status").innerText = "disconnesso";
+    });
+
+    // Evento: errore
     client.on('error', (err) => {
-        console.error("Errore connessione:", err);
+        mqttReady = false;
+        console.error("MQTT errore:", err);
         document.getElementById("status").innerText = "errore";
     });
 
-    // Disconnessione
-    client.on('close', () => {
-        console.warn("Connessione persa");
-        document.getElementById("status").innerText = "disconnesso";
+    // Evento: messaggio ricevuto
+    client.on('message', (topic, payload) => {
+        onMessageArrived(topic, payload.toString());
     });
 }
 
 
 
 // ---------------------------------------------------------
-// Callback: connessione riuscita
-// ---------------------------------------------------------
-function onConnect() {
-    console.log("Connesso al broker MQTT");
-    document.getElementById("status").innerText = "connesso";
-
-    // Ascolta gli annunci dei dispositivi
-    client.subscribe(announce_topic);
-    console.log("Sottoscritto a:", announce_topic);
-}
-
-
-// ---------------------------------------------------------
-// Callback: connessione fallita
-// ---------------------------------------------------------
-function onFail(err) {
-    console.error("Errore connessione:", err.errorMessage);
-    document.getElementById("status").innerText = "errore";
-}
-
-
-// ---------------------------------------------------------
-// Callback: connessione persa
-// ---------------------------------------------------------
-function onConnectionLost(responseObject) {
-    console.error("Connessione persa:", responseObject.errorMessage);
-    document.getElementById("status").innerText = "disconnesso";
-}
-
-
-// ---------------------------------------------------------
-// Gestione messaggi MQTT
+// GESTIONE MESSAGGI IN ARRIVO
 // ---------------------------------------------------------
 function onMessageArrived(topic, payload) {
 
@@ -113,20 +96,21 @@ function onMessageArrived(topic, payload) {
         document.getElementById("lastMessage").innerText = payload;
     }
 }
+
+
+
 // ---------------------------------------------------------
-// Aggiorna la lista dispositivi nella UI
+// AGGIORNA LISTA DISPOSITIVI
 // ---------------------------------------------------------
 function aggiornaListaDispositivi() {
     const sel = document.getElementById("deviceList");
     sel.innerHTML = "";
 
-    // Opzione iniziale visibile
     const empty = document.createElement("option");
     empty.value = "";
     empty.textContent = "-- seleziona un dispositivo --";
     sel.appendChild(empty);
 
-    // Aggiunta dispositivi rilevati
     discoveredDevices.forEach(d => {
         const opt = document.createElement("option");
         opt.value = d.id;
@@ -138,42 +122,36 @@ function aggiornaListaDispositivi() {
 
 
 // ---------------------------------------------------------
-// Selezione dispositivo da UI
+// SELEZIONE DISPOSITIVO
 // ---------------------------------------------------------
 function selezionaDispositivo() {
     const sel = document.getElementById("deviceList");
-
-    // ID del dispositivo = value dell'opzione selezionata
     deviceID = sel.value;
 
-    // Se per qualche motivo non c'è valore, esci
     if (!deviceID) {
         console.warn("Nessun deviceID selezionato");
         document.getElementById("selectedDevice").innerText = "nessuno";
         return;
     }
 
-    // Nome dispositivo = testo dell'opzione (prima della parentesi)
-    const fullLabel = sel.options[sel.selectedIndex].textContent;  // es: "proto2 (966941)"
-    deviceName = fullLabel.split(" (")[0];                         // -> "proto2"
+    const fullLabel = sel.options[sel.selectedIndex].textContent;
+    deviceName = fullLabel.split(" (")[0];
 
-    // Costruzione dei topic
-    topic_pub = "wifi_terminal/" + deviceID + "/rx";  // ESP → UI
-    topic_sub = "wifi_terminal/" + deviceID + "/tx";  // UI → ESP
+    topic_pub = `wifi_terminal/${deviceID}/rx`;
+    topic_sub = `wifi_terminal/${deviceID}/tx`;
 
-    // Sottoscrizione al topic di ricezione
     client.subscribe(topic_pub);
 
     console.log("Dispositivo selezionato:", deviceName, deviceID);
 
-    // Aggiornamento UI
     document.getElementById("selectedDevice").innerText =
         `${deviceName} (${deviceID})`;
 }
 
 
+
 // ---------------------------------------------------------
-// Invio messaggio al dispositivo
+// INVIO MESSAGGIO AL DISPOSITIVO
 // ---------------------------------------------------------
 function publishMessage() {
     let text = document.getElementById("msg").value;
@@ -188,19 +166,20 @@ function publishMessage() {
         return;
     }
 
+    if (!mqttReady) {
+        console.warn("MQTT non pronto, messaggio non inviato");
+        return;
+    }
+
+    console.log("TX @", performance.now(), "→", topic_sub, ":", text);
     client.publish(topic_sub, text);
-console.log("TX su", topic_sub, ":", text);
-
-
-    console.log("TX su", topic_sub, ":", text);
 }
 
 
+
 // ---------------------------------------------------------
-// Avvio automatico
+// AVVIO AUTOMATICO
 // ---------------------------------------------------------
 window.addEventListener("load", connectMQTT);
 window.selezionaDispositivo = selezionaDispositivo;
 window.publishMessage = publishMessage;
-
-
