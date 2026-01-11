@@ -8,6 +8,8 @@ broker = "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud";
 port = 8884;
 useTLS = true;
 
+const mqtt_user = "leo453";
+const mqtt_pass = "bsfg805NG";
 
 const announce_topic = "wifi_terminal/announce";
 
@@ -29,11 +31,14 @@ let discoveredDevices = [];
 function connectMQTT() {
     console.log("Connessione al broker MQTT...");
 
-    client = mqtt.connect(`wss://${broker}:${port}`, {
-        reconnectPeriod: 2000,   // tenta reconnect ogni 2s
-        connectTimeout: 5000,    // timeout handshake
-        keepalive: 30            // ping ogni 30s
-    });
+    client = mqtt.connect(`wss://${broker}:${port}/mqtt`, {
+    username: mqtt_user,
+    password: mqtt_pass,
+    reconnectPeriod: 2000,
+    connectTimeout: 5000,
+    keepalive: 30
+});
+
 
     // Evento: connessione stabilita
     client.on('connect', () => {
