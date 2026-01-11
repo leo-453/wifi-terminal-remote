@@ -1,8 +1,16 @@
 // ---------------------------------------------------------
 // CONFIGURAZIONE BROKER MQTT (WebSocket)
 // ---------------------------------------------------------
-const broker = "test.mosquitto.org";
-const port = 8081;
+//const broker = "test.mosquitto.org";
+//const port = 8081;
+
+broker = "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud";
+port = 8884;
+useTLS = true;
+
+username = "leo453";
+password = "bsfg805NG";
+
 
 const announce_topic = "wifi_terminal/announce";
 
