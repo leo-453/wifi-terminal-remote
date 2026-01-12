@@ -185,6 +185,7 @@ function publishMessage() {
     client.publish(topic_sub, text);
 
     document.getElementById("msg").value = "";
+    document.getElementById("msg").focus();
 }
 
 
