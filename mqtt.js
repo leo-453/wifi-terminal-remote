@@ -193,3 +193,15 @@ function publishMessage() {
 window.addEventListener("load", connectMQTT);
 window.selezionaDispositivo = selezionaDispositivo;
 window.publishMessage = publishMessage;
+window.addEventListener("load", () => {
+  connectMQTT();   // rimane attivo
+
+  const input = document.getElementById("msg");
+  input.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      publishMessage();   // funziona come il pulsante
+    }
+  });
+});
+
