@@ -3,7 +3,7 @@ console.log("MQTT Remote Terminal loaded");
 let client = null;
 
 // Inserisci qui i dati della tua istanza HiveMQ 
-  Cloud const MQTT_HOST = "wss://e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud:8884/mqtt";
+const MQTT_HOST = "wss://e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud:8884/mqtt";
 const MQTT_USER = "leo453"; 
 const MQTT_PASS = "<bsfg805NG>";
 
@@ -24,7 +24,7 @@ client = mqtt.connect(MQTT_HOST, {
   reconnectPeriod: 2000, // opzionale, ma utile 
   });
   
-  client = mqtt.connect("wss://test.mosquitto.org:8081");
+  
 
   client.on("connect", () => {
     document.getElementById("status").textContent = "Connected";
@@ -52,5 +52,12 @@ function sendMessage() {
     log("Not connected");
   }
 }
+
+document.getElementById("message").addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter") {
+    ev.preventDefault();
+    sendMessage();
+  }
+});
 
 window.onload = connectMQTT;
