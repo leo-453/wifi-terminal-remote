@@ -183,6 +183,8 @@ function publishMessage() {
 
     console.log("TX @", performance.now(), "→", topic_sub, ":", text);
     client.publish(topic_sub, text);
+
+    document.getElementById("msg").value = "";
 }
 
 
