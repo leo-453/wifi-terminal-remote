@@ -8,8 +8,8 @@ const MAX_MESSAGES = 20;
 
 // Aggiunge un messaggio al buffer
 function addMessage(msg) {
-  const timestamp = new Date().toLocaleTimeString();
-  const entry = timestamp + " → " + msg;
+ // const timestamp = new Date().toLocaleTimeString();
+ // const entry = timestamp + " → " + msg;
 
   messageBuffer.push(entry);
 
