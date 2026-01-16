@@ -7,9 +7,8 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Libreria MQTT Paho -->
- <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-
+    <!-- Libreria MQTT -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
     <!-- Script MQTT -->
     <script src="mqtt.js" defer></script>
@@ -51,18 +50,39 @@
     <pre id="lastMessage" style="background:#eee; padding:10px; min-height:50px;"></pre>
 
     <h3>Storico messaggi</h3>
-<div id="messageLog"
-     style="
-        white-space: pre-wrap;
-        font-family: monospace;
-        background: #f0f0f0;
-        padding: 10px;
-        height: 200px;
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        border-radius: 4px;">
-</div>
 
+    <!-- 🔵 Pulsante Elimina Storico -->
+    <button onclick="clearMessageLog()" 
+            style="margin-bottom:10px; padding:6px 12px; font-size:14px;">
+        Elimina Storico
+    </button>
+
+    <!-- 🔵 Area storico -->
+    <div id="messageLog"
+        style="
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;">
+    </div>
+
+    <hr>
+
+    <!-- 🔵 Area log MQTT (necessaria per log(msg)) -->
+    <h3>Log MQTT</h3>
+    <div id="log"
+        style="
+            background:#222;
+            color:#0f0;
+            padding:10px;
+            height:150px;
+            overflow-y:auto;
+            font-family:monospace;">
+    </div>
 
 </body>
 </html>
