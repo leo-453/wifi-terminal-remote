@@ -53,9 +53,9 @@ function clearMessageLog() {
 // LOG ORIGINALE (rimane invariato)
 // -----------------------------
 function log(msg) {
-  const box = document.getElementById("log");
-  box.innerHTML += msg + "<br>";
-  box.scrollTop = box.scrollHeight;
+  //const box = document.getElementById("log");
+  //box.innerHTML += msg + "<br>";
+  //box.scrollTop = box.scrollHeight;
 }
 
 
