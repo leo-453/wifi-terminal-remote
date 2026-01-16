@@ -1,9 +1,6 @@
 // ---------------------------------------------------------
 // CONFIGURAZIONE BROKER MQTT (WebSocket)
 // ---------------------------------------------------------
-//const broker = "test.mosquitto.org";
-//const port = 8081;
-
 broker = "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud";
 port = 8884;
 useTLS = true;
@@ -22,7 +19,16 @@ let deviceName = null;
 let topic_pub = null;   // ESP → UI
 let topic_sub = null;   // UI → ESP
 
+let old_topic_pub = null;
 let discoveredDevices = [];
+
+
+// ---------------------------------------------------------
+// FUNZIONE STATO UI
+// ---------------------------------------------------------
+function setStatus(txt) {
+    document.getElementById("status").innerText = txt;
+}
 
 
 // ---------------------------------------------------------
@@ -32,46 +38,40 @@ function connectMQTT() {
     console.log("Connessione al broker MQTT...");
 
     client = mqtt.connect(`wss://${broker}:${port}/mqtt`, {
-    username: mqtt_user,
-    password: mqtt_pass,
-    reconnectPeriod: 2000,
-    connectTimeout: 5000,
-    keepalive: 30
-});
+        username: mqtt_user,
+        password: mqtt_pass,
+        reconnectPeriod: 2000,
+        connectTimeout: 5000,
+        keepalive: 30
+    });
 
-
-    // Evento: connessione stabilita
     client.on('connect', () => {
         mqttReady = true;
         console.log("MQTT connesso");
-        document.getElementById("status").innerText = "connesso";
+        setStatus("connesso");
 
         client.subscribe(announce_topic);
         console.log("Sottoscritto a:", announce_topic);
     });
 
-    // Evento: riconnessione in corso
     client.on('reconnect', () => {
         mqttReady = false;
         console.warn("MQTT: riconnessione...");
-        document.getElementById("status").innerText = "riconnessione...";
+        setStatus("riconnessione...");
     });
 
-    // Evento: connessione chiusa
     client.on('close', () => {
         mqttReady = false;
         console.warn("MQTT: connessione chiusa");
-        document.getElementById("status").innerText = "disconnesso";
+        setStatus("disconnesso");
     });
 
-    // Evento: errore
     client.on('error', (err) => {
         mqttReady = false;
         console.error("MQTT errore:", err);
-        document.getElementById("status").innerText = "errore";
+        setStatus("errore");
     });
 
-    // Evento: messaggio ricevuto
     client.on('message', (topic, payload) => {
         onMessageArrived(topic, payload.toString());
     });
@@ -103,9 +103,13 @@ function onMessageArrived(topic, payload) {
     // Messaggi dal dispositivo selezionato
     if (topic === topic_pub) {
         console.log("RX:", payload);
+
         document.getElementById("lastMessage").innerText = payload;
-        // Aggiungi allo storico 
-        addMessage(payload);
+
+        // Aggiungi allo storico
+        if (typeof addMessage === "function") {
+            addMessage(payload);
+        }
     }
 }
 
@@ -149,10 +153,16 @@ function selezionaDispositivo() {
     const fullLabel = sel.options[sel.selectedIndex].textContent;
     deviceName = fullLabel.split(" (")[0];
 
+    // Disiscrizione dal vecchio topic
+    if (old_topic_pub) {
+        client.unsubscribe(old_topic_pub);
+    }
+
     topic_pub = `wifi_terminal/${deviceID}/rx`;
     topic_sub = `wifi_terminal/${deviceID}/tx`;
 
     client.subscribe(topic_pub);
+    old_topic_pub = topic_pub;
 
     console.log("Dispositivo selezionato:", deviceName, deviceID);
 
@@ -183,7 +193,7 @@ function publishMessage() {
         return;
     }
 
-    console.log("TX @", performance.now(), "→", topic_sub, ":", text);
+    console.log("TX →", topic_sub, ":", text);
     client.publish(topic_sub, text);
 
     document.getElementById("msg").value = "";
@@ -195,18 +205,18 @@ function publishMessage() {
 // ---------------------------------------------------------
 // AVVIO AUTOMATICO
 // ---------------------------------------------------------
-window.addEventListener("load", connectMQTT);
-window.selezionaDispositivo = selezionaDispositivo;
-window.publishMessage = publishMessage;
 window.addEventListener("load", () => {
-  connectMQTT();   // rimane attivo
 
-  const input = document.getElementById("msg");
-  input.addEventListener("keydown", (ev) => {
-    if (ev.key === "Enter") {
-      ev.preventDefault();
-      publishMessage();   // funziona come il pulsante
-    }
-  });
+    connectMQTT();   // UNA sola volta
+
+    const input = document.getElementById("msg");
+    input.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") {
+            ev.preventDefault();
+            publishMessage();
+        }
+    });
 });
 
+window.selezionaDispositivo = selezionaDispositivo;
+window.publishMessage = publishMessage;
