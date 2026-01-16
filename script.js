@@ -1,5 +1,7 @@
 console.log("MQTT Remote Terminal loaded");
 
+
+
 let client = null;
 
 // Inserisci qui i dati della tua istanza HiveMQ 
@@ -118,5 +120,8 @@ document.getElementById("message").addEventListener("keydown", (ev) => {
     sendMessage();
   }
 });
+
+window.addMessage = addMessage;
+window.clearMessageLog = clearMessageLog;
 
 window.onload = connectMQTT;
