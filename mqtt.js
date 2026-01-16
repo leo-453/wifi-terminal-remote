@@ -104,6 +104,8 @@ function onMessageArrived(topic, payload) {
     if (topic === topic_pub) {
         console.log("RX:", payload);
         document.getElementById("lastMessage").innerText = payload;
+        // Aggiungi allo storico 
+        addMessage(payload);
     }
 }
 
