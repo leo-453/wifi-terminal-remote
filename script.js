@@ -10,7 +10,7 @@ const MAX_MESSAGES = 20;
 function addMessage(msg) {
  // const timestamp = new Date().toLocaleTimeString();
  // const entry = timestamp + " → " + msg;
-
+ const entry = msg; // nessun timestamp
   messageBuffer.push(entry);
 
   if (messageBuffer.length > MAX_MESSAGES) {
