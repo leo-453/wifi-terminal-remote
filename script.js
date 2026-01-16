@@ -7,7 +7,9 @@ const MQTT_HOST = "wss://e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud:888
 const MQTT_USER = "leo453"; 
 const MQTT_PASS = "<bsfg805NG>";
 
-
+// Buffer dei messaggi 
+let messageBuffer = []; 
+const MAX_MESSAGES = 20; // puoi aumentare o diminuire
 
 function log(msg) {
   const box = document.getElementById("log");
@@ -59,5 +61,30 @@ document.getElementById("message").addEventListener("keydown", (ev) => {
     sendMessage();
   }
 });
+
+
+// Aggiunge un messaggio al buffer
+function addMessage(msg) {
+  const timestamp = new Date().toLocaleTimeString();
+  const entry = timestamp + " → " + msg;
+
+  messageBuffer.push(entry);
+
+  // Mantieni solo gli ultimi N messaggi
+  if (messageBuffer.length > MAX_MESSAGES) {
+    messageBuffer.shift();
+  }
+
+  updateMessageArea();
+}
+
+// Aggiorna l'area storico
+function updateMessageArea() {
+  const logDiv = document.getElementById("messageLog");
+  logDiv.textContent = messageBuffer.join("\n");
+  logDiv.scrollTop = logDiv.scrollHeight;  // scroll automatico
+}
+
+
 
 window.onload = connectMQTT;
