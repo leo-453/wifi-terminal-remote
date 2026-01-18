@@ -97,6 +97,16 @@ function onMessageArrived(topic, payload) {
         }
 
         console.log("Dispositivo rilevato:", name, id);
+
+// ----------------------------------------- 
+// RISPOSTA AUTOMATICA: PING AL DISPOSITIVO 
+// ----------------------------------------- 
+if (mqttReady) {
+    const controlTopic = `wifi_terminal/${id}/control`;
+    client.publish(controlTopic, "PING"); 
+    console.log("PING inviato a", controlTopic);
+   }
+        
         return;
     }
 
