@@ -60,8 +60,20 @@ function sendMessage() {
   document.getElementById("msg").focus();
 }
 
+class SimplePlotter {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext("2d");
+        this.running = false;
+        this.data = [];
+        this.maxPoints = 500;
+    }
+
 let plotter = null;
 let plotterVisible = false;
+
+
+
 // Invio con tasto Invio
 window.addEventListener("load", () => {
   // Gestione invio messaggi
@@ -94,14 +106,7 @@ window.addEventListener("load", () => {
   }
 });
 
-class SimplePlotter {
-    constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext("2d");
-        this.running = false;
-        this.data = [];
-        this.maxPoints = 500;
-    }
+
 
     start() {
         if (!this.running) {
