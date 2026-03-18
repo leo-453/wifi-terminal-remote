@@ -60,8 +60,11 @@ function sendMessage() {
   document.getElementById("msg").focus();
 }
 
+let plotter = null;
+let plotterVisible = false;
 // Invio con tasto Invio
 window.addEventListener("load", () => {
+  // Gestione invio messaggi
   const input = document.getElementById("msg");
   input.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
@@ -69,7 +72,28 @@ window.addEventListener("load", () => {
       sendMessage();
     }
   });
+
+  // -----------------------------
+  // INIZIALIZZA PLOTTER
+  // -----------------------------
+  plotter = new SimplePlotter("plotterCanvas");
+
+  const btnPlotter = document.getElementById("btnPlotter");
+  if (btnPlotter) {
+    btnPlotter.addEventListener("click", () => {
+      plotterVisible = !plotterVisible;
+
+      const panel = document.getElementById("plotterPanel");
+      if (panel) {
+        panel.style.display = plotterVisible ? "block" : "none";
+      }
+
+      if (plotterVisible) plotter.start();
+      else plotter.stop();
+    });
+  }
 });
+
 class SimplePlotter {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -132,6 +156,11 @@ class SimplePlotter {
         }
     }
 }
+
+
+
+
+
 
 // -----------------------------
 // ESPORTA FUNZIONI GLOBALI
