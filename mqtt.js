@@ -84,6 +84,14 @@ function connectMQTT() {
 // ---------------------------------------------------------
 function onMessageArrived(topic, payload) {
 
+
+    if (message.destinationName === "wifi_terminal/plotter/data") {
+    if (plotterVisible && plotter) {
+        plotter.addData(message.payloadString);
+    }
+    return;
+}
+
     // Annuncio dispositivo
     if (topic === announce_topic && payload.startsWith("HELLO:")) {
 
