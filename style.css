@@ -72,3 +72,19 @@ button.connect {
 button.connect:hover {
   background: #1976d2;
 }
+
+#plotterPanel {
+    margin-top: 10px;
+    border: 1px solid #888;
+    padding: 10px;
+    background: #f8f8f8;
+    border-radius: 6px;
+}
+
+#plotterCanvas {
+    width: 100%;
+    height: 300px;
+    background: white;
+    border: 1px solid #ccc;
+}
+
