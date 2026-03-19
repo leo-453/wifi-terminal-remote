@@ -84,17 +84,17 @@ function connectMQTT() {
 // ---------------------------------------------------------
 function onMessageArrived(topic, payload) {
 
-
-// -----------------------------
+    // -----------------------------
     // DATI PER IL PLOTTER
     // -----------------------------
     if (topic === "wifi_terminal/plotter/data") {
-    handlePlotterData(payload);
-    return;
-}
+        handlePlotterData(payload);
+        return;
+    }
 
-
-    // Annuncio dispositivo
+    // -----------------------------
+    // ANNUNCIO DISPOSITIVO
+    // -----------------------------
     if (topic === announce_topic && payload.startsWith("HELLO:")) {
 
         const parts = payload.split(":");
@@ -108,25 +108,24 @@ function onMessageArrived(topic, payload) {
 
         console.log("Dispositivo rilevato:", name, id);
 
-// ----------------------------------------- 
-// RISPOSTA AUTOMATICA: PING AL DISPOSITIVO 
-// ----------------------------------------- 
-if (mqttReady) {
-    const controlTopic = `wifi_terminal/${id}/control`;
-    client.publish(controlTopic, "PING"); 
-    console.log("PING inviato a", controlTopic);
-   }
-        
+        // Risposta automatica: PING
+        if (mqttReady) {
+            const controlTopic = `wifi_terminal/${id}/control`;
+            client.publish(controlTopic, "PING");
+            console.log("PING inviato a", controlTopic);
+        }
+
         return;
     }
 
-    // Messaggi dal dispositivo selezionato
+    // -----------------------------
+    // MESSAGGI DAL DISPOSITIVO SELEZIONATO
+    // -----------------------------
     if (topic === topic_pub) {
         console.log("RX:", payload);
 
         document.getElementById("lastMessage").innerText = payload;
 
-        // Aggiungi allo storico
         if (typeof addMessage === "function") {
             addMessage(payload);
         }
@@ -188,6 +187,14 @@ function selezionaDispositivo() {
 
     document.getElementById("selectedDevice").innerText =
         `${deviceName} (${deviceID})`;
+
+    // -----------------------------
+    // RESET PLOTTER AL CAMBIO DEVICE
+    // -----------------------------
+    if (typeof plotterBuf !== "undefined") {
+        plotterBuf = [];
+        drawPlotter();
+    }
 }
 
 
