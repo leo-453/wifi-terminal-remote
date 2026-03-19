@@ -118,3 +118,8 @@ button.connect:hover {
         font-size: 16px !important;
     }
 }
+@media (max-width: 600px) and (orientation: portrait) {
+    #plotterPanel {
+        height: 45vh !important;
+    }
+}
