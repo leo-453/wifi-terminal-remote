@@ -293,6 +293,35 @@ function drawPlotter() {
   });
 }
 
+// ===============================
+// DRAG DEL PANNELLO PLOTTER
+// ===============================
+(function () {
+    const box = document.getElementById("plotterPanel");
+    let mx = 0, my = 0, dragging = false;
+
+    box.addEventListener("mousedown", e => {
+        dragging = true;
+        mx = e.clientX;
+        my = e.clientY;
+    });
+
+    document.addEventListener("mousemove", e => {
+        if (!dragging) return;
+
+        const dx = e.clientX - mx;
+        const dy = e.clientY - my;
+
+        mx = e.clientX;
+        my = e.clientY;
+
+        const rect = box.getBoundingClientRect();
+        box.style.left = (rect.left + dx) + "px";
+        box.style.top = (rect.top + dy) + "px";
+    });
+
+    document.addEventListener("mouseup", () => dragging = false);
+})();
 
 // ===============================
 // EXPORT
