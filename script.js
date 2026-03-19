@@ -93,8 +93,16 @@ window.addEventListener("load", () => {
       plotterBuf = plotterBuf.map(() => []);
       drawPlotter();
     }
+     // Chiudi pannello FS
+    document.getElementById("plotterFSControl").style.display = "none";
   };
 
+document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") {
+        const fsCtrl = document.getElementById("plotterFSControl");
+        fsCtrl.style.display = "none";
+    }
+});
 
   
   // RECORD
