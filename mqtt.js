@@ -92,6 +92,14 @@ function onMessageArrived(topic, payload) {
         handlePlotterData(payload);
         return;
     }
+ // Altrimenti → va nella finestra Output
+    console.log("RX:", payload);
+    document.getElementById("lastMessage").innerText = payload;
+
+    if (typeof addMessage === "function") {
+        addMessage(payload);
+    }
+       
 }
 
 
