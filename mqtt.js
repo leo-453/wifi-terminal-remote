@@ -87,10 +87,13 @@ function onMessageArrived(topic, payload) {
     // -----------------------------
     // DATI PER IL PLOTTER
     // -----------------------------
-    if (topic === "wifi_terminal/plotter/data") {
+   if (topic === topic_pub) {
+    if (payload.startsWith("/")) {
         handlePlotterData(payload);
         return;
     }
+}
+
 
     // -----------------------------
     // ANNUNCIO DISPOSITIVO
