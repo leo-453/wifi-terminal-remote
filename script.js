@@ -319,16 +319,18 @@ function drawPlotter() {
     let startX = 0, startY = 0;
     let origLeft = 0, origTop = 0;
 
+    // Inizializza left/top se mancanti
+    if (!box.style.left) box.style.left = "100px";
+    if (!box.style.top)  box.style.top  = "100px";
+
     box.addEventListener("mousedown", e => {
         dragging = true;
 
-        // posizione iniziale del mouse
         startX = e.clientX;
         startY = e.clientY;
 
-        // posizione iniziale del pannello
-        origLeft = parseInt(box.style.left || 0, 10);
-        origTop  = parseInt(box.style.top  || 0, 10);
+        origLeft = parseInt(box.style.left, 10);
+        origTop  = parseInt(box.style.top, 10);
 
         e.preventDefault();
     });
