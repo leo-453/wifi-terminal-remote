@@ -219,10 +219,8 @@ function updatePlotterValues(values) {
 // ===============================
 // DRAW PLOTTER
 // ===============================
-function drawPlotter() {
 
-  ctx.fillStyle = "#000";
-ctx.fillRect(0, 0, W, H);
+function drawPlotter() {
 
   const canvas = document.getElementById("plotterCanvas");
   const ctx = canvas.getContext("2d");
@@ -230,7 +228,9 @@ ctx.fillRect(0, 0, W, H);
   const W = canvas.width;
   const H = canvas.height;
 
-  ctx.clearRect(0, 0, W, H);
+  // Sfondo nero
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, W, H);
 
   // Griglia
   ctx.strokeStyle = "#808080";
@@ -296,6 +296,11 @@ ctx.fillRect(0, 0, W, H);
     ctx.stroke();
   });
 }
+
+
+
+
+
 
 // ===============================
 // DRAG DEL PANNELLO PLOTTER
