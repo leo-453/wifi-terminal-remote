@@ -220,6 +220,10 @@ function updatePlotterValues(values) {
 // DRAW PLOTTER
 // ===============================
 function drawPlotter() {
+
+  ctx.fillStyle = "#000";
+ctx.fillRect(0, 0, W, H);
+
   const canvas = document.getElementById("plotterCanvas");
   const ctx = canvas.getContext("2d");
 
