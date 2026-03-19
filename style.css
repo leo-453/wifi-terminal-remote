@@ -93,3 +93,28 @@ button.connect:hover {
     top: 100px;
 }
 
+@media (max-width: 600px) {
+    #plotterPanel {
+        width: 90vw !important;
+        height: 50vh !important;
+        left: 5vw !important;
+        top: 10vh !important;
+    }
+
+    #plotterCanvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    #plotterValues {
+        font-size: 14px !important;
+    }
+}
+
+
+@media (max-width: 600px) {
+    #plotterPanel button {
+        padding: 10px 16px !important;
+        font-size: 16px !important;
+    }
+}
