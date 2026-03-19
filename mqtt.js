@@ -82,26 +82,32 @@ function connectMQTT() {
 // ---------------------------------------------------------
 // GESTIONE MESSAGGI IN ARRIVO
 // ---------------------------------------------------------
+
+
+
 function onMessageArrived(topic, payload) {
 
     // -----------------------------
-    // DATI PER IL PLOTTER
+    // MESSAGGI DAL DISPOSITIVO SELEZIONATO
     // -----------------------------
-   if (topic === topic_pub) {
-    if (payload.startsWith("/")) {
-        handlePlotterData(payload);
+    if (topic === topic_pub) {
+
+        // Se inizia con "/" → è per il Plotter
+        if (payload.startsWith("/")) {
+            handlePlotterData(payload);
+            return;
+        }
+
+        // Altrimenti → Output
+        console.log("RX:", payload);
+        document.getElementById("lastMessage").innerText = payload;
+
+        if (typeof addMessage === "function") {
+            addMessage(payload);
+        }
+
         return;
     }
- // Altrimenti → va nella finestra Output
-    console.log("RX:", payload);
-    document.getElementById("lastMessage").innerText = payload;
-
-    if (typeof addMessage === "function") {
-        addMessage(payload);
-    }
-       return;
-}
-
 
     // -----------------------------
     // ANNUNCIO DISPOSITIVO
@@ -119,7 +125,6 @@ function onMessageArrived(topic, payload) {
 
         console.log("Dispositivo rilevato:", name, id);
 
-        // Risposta automatica: PING
         if (mqttReady) {
             const controlTopic = `wifi_terminal/${id}/control`;
             client.publish(controlTopic, "PING");
@@ -128,8 +133,6 @@ function onMessageArrived(topic, payload) {
 
         return;
     }
-
-   
 }
 
 
