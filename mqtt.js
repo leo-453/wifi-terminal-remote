@@ -52,6 +52,13 @@ function connectMQTT() {
 
         client.subscribe(announce_topic);
         console.log("Sottoscritto a:", announce_topic);
+
+        // Se un dispositivo era già selezionato → risottoscrivi
+        if (topic_pub) {
+            console.log("MQTT connesso → mi iscrivo a", topic_pub);
+            client.subscribe(topic_pub);
+            old_topic_pub = topic_pub;
+        }
     });
 
     client.on('reconnect', () => {
@@ -82,9 +89,6 @@ function connectMQTT() {
 // ---------------------------------------------------------
 // GESTIONE MESSAGGI IN ARRIVO
 // ---------------------------------------------------------
-
-
-
 function onMessageArrived(topic, payload) {
 
     // -----------------------------
@@ -175,13 +179,19 @@ function selezionaDispositivo() {
     const fullLabel = sel.options[sel.selectedIndex].textContent;
     deviceName = fullLabel.split(" (")[0];
 
+    topic_pub = `wifi_terminal/${deviceID}/rx`;
+    topic_sub = `wifi_terminal/${deviceID}/tx`;
+
+    // Se MQTT non è ancora connesso → aspetta
+    if (!mqttReady) {
+        console.warn("MQTT non pronto, rimando subscribe...");
+        return;
+    }
+
     // Disiscrizione dal vecchio topic
     if (old_topic_pub) {
         client.unsubscribe(old_topic_pub);
     }
-
-    topic_pub = `wifi_terminal/${deviceID}/rx`;
-    topic_sub = `wifi_terminal/${deviceID}/tx`;
 
     client.subscribe(topic_pub);
     old_topic_pub = topic_pub;
@@ -191,9 +201,7 @@ function selezionaDispositivo() {
     document.getElementById("selectedDevice").innerText =
         `${deviceName} (${deviceID})`;
 
-    // -----------------------------
-    // RESET PLOTTER AL CAMBIO DEVICE
-    // -----------------------------
+    // Reset plotter
     if (typeof plotterBuf !== "undefined") {
         plotterBuf = [];
         drawPlotter();
