@@ -87,4 +87,9 @@ button.connect:hover {
     background: white;
     border: 1px solid #ccc;
 }
+#plotterPanel {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+}
 
