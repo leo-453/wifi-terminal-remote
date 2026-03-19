@@ -89,11 +89,9 @@ function onMessageArrived(topic, payload) {
     // DATI PER IL PLOTTER
     // -----------------------------
     if (topic === "wifi_terminal/plotter/data") {
-        if (plotterVisible && plotter) {
-            plotter.addData(payload);
-        }
-        return;
-    }
+    handlePlotterData(payload);
+    return;
+}
 
 
     // Annuncio dispositivo
