@@ -315,30 +315,37 @@ function drawPlotter() {
 // ===============================
 (function () {
     const box = document.getElementById("plotterPanel");
-    let mx = 0, my = 0, dragging = false;
+    let dragging = false;
+    let startX = 0, startY = 0;
+    let origLeft = 0, origTop = 0;
 
     box.addEventListener("mousedown", e => {
         dragging = true;
-        mx = e.clientX;
-        my = e.clientY;
+
+        // posizione iniziale del mouse
+        startX = e.clientX;
+        startY = e.clientY;
+
+        // posizione iniziale del pannello
+        origLeft = parseInt(box.style.left || 0, 10);
+        origTop  = parseInt(box.style.top  || 0, 10);
+
+        e.preventDefault();
     });
 
     document.addEventListener("mousemove", e => {
         if (!dragging) return;
 
-        const dx = e.clientX - mx;
-        const dy = e.clientY - my;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
 
-        mx = e.clientX;
-        my = e.clientY;
-
-        const rect = box.getBoundingClientRect();
-        box.style.left = (rect.left + dx) + "px";
-        box.style.top = (rect.top + dy) + "px";
+        box.style.left = (origLeft + dx) + "px";
+        box.style.top  = (origTop  + dy) + "px";
     });
 
     document.addEventListener("mouseup", () => dragging = false);
 })();
+
 
 // ===============================
 // EXPORT
