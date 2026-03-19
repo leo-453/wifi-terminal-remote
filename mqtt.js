@@ -99,7 +99,7 @@ function onMessageArrived(topic, payload) {
     if (typeof addMessage === "function") {
         addMessage(payload);
     }
-       
+       return;
 }
 
 
@@ -129,18 +129,7 @@ function onMessageArrived(topic, payload) {
         return;
     }
 
-    // -----------------------------
-    // MESSAGGI DAL DISPOSITIVO SELEZIONATO
-    // -----------------------------
-    if (topic === topic_pub) {
-        console.log("RX:", payload);
-
-        document.getElementById("lastMessage").innerText = payload;
-
-        if (typeof addMessage === "function") {
-            addMessage(payload);
-        }
-    }
+   
 }
 
 
