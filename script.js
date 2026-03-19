@@ -95,6 +95,8 @@ window.addEventListener("load", () => {
     }
   };
 
+
+  
   // RECORD
   document.getElementById("plotterRecord").onclick = () => {
     plotterRecording = !plotterRecording;
@@ -120,6 +122,52 @@ window.addEventListener("load", () => {
 
 });
 
+// ===============================
+// TOGGLE PLOTTER PANEL
+// ===============================
+document.getElementById("plotterToggle").onclick = () => {
+
+    const panel = document.getElementById("plotterPanel");
+    const btn   = document.getElementById("plotterToggle");
+    const fsCtrl = document.getElementById("plotterFSControl");
+    const recBtn = document.getElementById("plotterRecord");
+
+    // Se è chiuso → apri
+    if (panel.style.display === "none" || panel.style.display === "") {
+
+        panel.style.display = "block";
+        btn.textContent = "Plotter_off";
+
+        // Chiudi pannello FS
+        fsCtrl.style.display = "none";
+
+    } else {
+
+        // Se è aperto → chiudi
+        panel.style.display = "none";
+        btn.textContent = "Plotter";
+
+        // Chiudi pannello FS
+        fsCtrl.style.display = "none";
+
+        // Se stiamo registrando → stop + salva CSV
+        if (plotterRecording) {
+            plotterRecording = false;
+            recBtn.style.background = "#333";
+            recBtn.textContent = "Record";
+
+            if (plotterCSV.length > 0) {
+                const csvContent = "data:text/csv;charset=utf-8," + plotterCSV.join("\n");
+                const a = document.createElement("a");
+                a.href = encodeURI(csvContent);
+                a.download = "plot.csv";
+                a.click();
+            }
+
+            plotterCSV = [];
+        }
+    }
+};
 
 // ===============================
 // HANDLE PLOTTER DATA
