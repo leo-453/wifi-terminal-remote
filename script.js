@@ -325,7 +325,7 @@ function drawPlotter() {
     if (!box.style.left) box.style.left = "100px";
     if (!box.style.top)  box.style.top  = "100px";
 
-    box.addEventListener("mousedown", e => {
+document.getElementById("plotterDragBar").addEventListener("mousedown", e => {
         dragging = true;
         startX = e.clientX;
         startY = e.clientY;
