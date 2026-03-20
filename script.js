@@ -370,27 +370,7 @@ function drawPlotter() {
     // -------------------------
     // DRAG CON TOUCH
     // -------------------------
-    box.addEventListener("touchstart", e => {
-        dragging = true;
-        const t = e.touches[0];
-        startX = t.clientX;
-        startY = t.clientY;
-        origLeft = parseInt(box.style.left, 10);
-        origTop  = parseInt(box.style.top, 10);
-        e.preventDefault();
-    }, { passive: false });
 
-    document.addEventListener("touchmove", e => {
-        if (!dragging) return;
-        const t = e.touches[0];
-        const dx = t.clientX - startX;
-        const dy = t.clientY - startY;
-        box.style.left = (origLeft + dx) + "px";
-        box.style.top  = (origTop  + dy) + "px";
-        e.preventDefault();
-    }, { passive: false });
-
-    document.addEventListener("touchend", () => dragging = false);
 })();
 
 // ===============================
