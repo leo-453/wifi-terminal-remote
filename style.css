@@ -83,8 +83,8 @@ button.connect:hover {
     border-radius: 6px;
     z-index: 9999;
     /* FIX Safari */
-    -webkit-user-select: none;
-    user-select: none;
+    -webkit-user-select: text;
+    user-select: text;
     touch-action: none;
 }
 
