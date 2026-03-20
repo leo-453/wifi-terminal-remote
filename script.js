@@ -318,6 +318,8 @@ function drawPlotter() {
 // ===============================
 (function () {
     const box = document.getElementById("plotterPanel");
+    const bar = document.getElementById("plotterDragBar");
+
     let dragging = false;
     let startX = 0, startY = 0;
     let origLeft = 0, origTop = 0;
@@ -325,7 +327,8 @@ function drawPlotter() {
     if (!box.style.left) box.style.left = "100px";
     if (!box.style.top)  box.style.top  = "100px";
 
-document.getElementById("plotterDragBar").addEventListener("mousedown", e => {
+    // 👉 Drag SOLO sulla barra superiore
+    bar.addEventListener("mousedown", e => {
         dragging = true;
         startX = e.clientX;
         startY = e.clientY;
