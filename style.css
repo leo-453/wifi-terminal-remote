@@ -90,6 +90,10 @@ button.connect:hover {
     border: 1px solid #ccc;
 }
 
+#plotterCanvas {
+    pointer-events: none;
+}
+
 
 @media (max-width: 600px) {
     #plotterPanel {
