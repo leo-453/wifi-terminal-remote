@@ -82,7 +82,13 @@ button.connect:hover {
     background: #f8f8f8;
     border-radius: 6px;
     z-index: 9999;
+    /* FIX Safari */
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
 }
+
+
 
 #plotterHeader {
     padding: 10px;
