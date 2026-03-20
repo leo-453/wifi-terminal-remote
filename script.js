@@ -357,18 +357,7 @@ function drawPlotter() {
         e.preventDefault();
     });
 
-    document.addEventListener("mousemove", e => {
-        if (!dragging) return;
 
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        box.style.left = (origLeft + dx) + "px";
-        box.style.top  = (origTop  + dy) + "px";
-    });
-
-    document.addEventListener("mouseup", () => dragging = false);
-})();
 
 
 // ===============================
