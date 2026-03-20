@@ -310,9 +310,6 @@ function drawPlotter() {
 
 
 
-
-
-
 // ===============================
 // DRAG DEL PANNELLO PLOTTER
 // ===============================
@@ -328,14 +325,13 @@ function drawPlotter() {
     if (!box.style.top)  box.style.top  = "100px";
 
     // 👉 Drag SOLO sulla barra superiore
-   // bar.addEventListener("mousedown", e => {
-  document.getElementById("plotterDragBar").addEventListener("mousedown", e => {
+    bar.addEventListener("mousedown", e => {
         dragging = true;
         startX = e.clientX;
         startY = e.clientY;
         origLeft = parseInt(box.style.left, 10);
         origTop  = parseInt(box.style.top, 10);
-      //  e.preventDefault();
+        e.preventDefault();   // qui va bene!
     });
 
     document.addEventListener("mousemove", e => {
@@ -348,6 +344,9 @@ function drawPlotter() {
 
     document.addEventListener("mouseup", () => dragging = false);
 })();
+
+
+
 
 // ===============================
 // EXPORT
