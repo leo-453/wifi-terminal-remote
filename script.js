@@ -341,13 +341,9 @@ function drawPlotter() {
     let startX = 0, startY = 0;
     let origLeft = 0, origTop = 0;
 
-    // Inizializza posizione se mancante
     if (!box.style.left) box.style.left = "100px";
     if (!box.style.top)  box.style.top  = "100px";
 
-    // -------------------------
-    // DRAG CON MOUSE
-    // -------------------------
     box.addEventListener("mousedown", e => {
         dragging = true;
         startX = e.clientX;
@@ -366,11 +362,6 @@ function drawPlotter() {
     });
 
     document.addEventListener("mouseup", () => dragging = false);
-
-    // -------------------------
-    // DRAG CON TOUCH
-    // -------------------------
-
 })();
 
 // ===============================
