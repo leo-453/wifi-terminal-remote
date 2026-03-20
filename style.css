@@ -86,6 +86,7 @@ button.connect:hover {
     -webkit-user-select: text;
     user-select: text;
     touch-action: none;
+  cursor: auto;
 }
 
 
