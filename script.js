@@ -178,26 +178,7 @@ document.getElementById("plotterToggle").onclick = () => {
 };
 
 
-// Supporto touch per smartphone
-box.addEventListener("touchstart", e => {
-    dragging = true;
-    const t = e.touches[0];
-    startX = t.clientX;
-    startY = t.clientY;
-    origLeft = parseInt(box.style.left, 10);
-    origTop  = parseInt(box.style.top, 10);
-});
 
-document.addEventListener("touchmove", e => {
-    if (!dragging) return;
-    const t = e.touches[0];
-    const dx = t.clientX - startX;
-    const dy = t.clientY - startY;
-    box.style.left = (origLeft + dx) + "px";
-    box.style.top  = (origTop  + dy) + "px";
-});
-
-document.addEventListener("touchend", () => dragging = false);
 
 // ===============================
 // HANDLE PLOTTER DATA
