@@ -341,24 +341,57 @@ function drawPlotter() {
     let startX = 0, startY = 0;
     let origLeft = 0, origTop = 0;
 
-    // Inizializza left/top se mancanti
+    // Inizializza posizione se mancante
     if (!box.style.left) box.style.left = "100px";
     if (!box.style.top)  box.style.top  = "100px";
 
+    // -------------------------
+    // DRAG CON MOUSE
+    // -------------------------
     box.addEventListener("mousedown", e => {
         dragging = true;
-
         startX = e.clientX;
         startY = e.clientY;
-
         origLeft = parseInt(box.style.left, 10);
         origTop  = parseInt(box.style.top, 10);
-
         e.preventDefault();
     });
 
+    document.addEventListener("mousemove", e => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        box.style.left = (origLeft + dx) + "px";
+        box.style.top  = (origTop  + dy) + "px";
+    });
 
+    document.addEventListener("mouseup", () => dragging = false);
 
+    // -------------------------
+    // DRAG CON TOUCH
+    // -------------------------
+    box.addEventListener("touchstart", e => {
+        dragging = true;
+        const t = e.touches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+        origLeft = parseInt(box.style.left, 10);
+        origTop  = parseInt(box.style.top, 10);
+        e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener("touchmove", e => {
+        if (!dragging) return;
+        const t = e.touches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        box.style.left = (origLeft + dx) + "px";
+        box.style.top  = (origTop  + dy) + "px";
+        e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener("touchend", () => dragging = false);
+})();
 
 // ===============================
 // EXPORT
