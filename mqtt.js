@@ -23,17 +23,6 @@ let old_topic_pub = null;
 let discoveredDevices = [];
 
 
- let text = remoteClientID + ":" + document.getElementById("msg").value;
-client.publish(topic_sub, text);
-
-// ---------------------------------------------------------
-// FUNZIONE STATO UI
-// ---------------------------------------------------------
-function setStatus(txt) {
-    document.getElementById("status").innerText = txt;
-}
-
-
 // =====================================
 // Generazione clientID remoto persistente
 // =====================================
@@ -41,6 +30,14 @@ let remoteClientID = localStorage.getItem("remoteClientID");
 if (!remoteClientID) {
     remoteClientID = "REMOTE_" + Math.random().toString(36).substring(2, 10).toUpperCase();
     localStorage.setItem("remoteClientID", remoteClientID);
+}
+
+
+// ---------------------------------------------------------
+// FUNZIONE STATO UI
+// ---------------------------------------------------------
+function setStatus(txt) {
+    document.getElementById("status").innerText = txt;
 }
 
 
@@ -271,3 +268,4 @@ window.addEventListener("load", () => {
 
 window.selezionaDispositivo = selezionaDispositivo;
 window.publishMessage = publishMessage;
+
