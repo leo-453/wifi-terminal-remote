@@ -1,13 +1,6 @@
 console.log("MQTT Remote Terminal loaded");
 
-// =====================================================
-// CLIENT ID REMOTO (persistente)
-// =====================================================
-let clientID = localStorage.getItem("remoteClientID");
-if (!clientID) {
-    clientID = "REMOTE_" + Math.random().toString(36).substring(2, 10).toUpperCase();
-    localStorage.setItem("remoteClientID", clientID);
-}
+
 
 // ===============================
 // PLOTTER REMOTO MQTT - VARIABILI
