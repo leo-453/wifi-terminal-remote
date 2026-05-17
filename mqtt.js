@@ -23,6 +23,9 @@ let old_topic_pub = null;
 let discoveredDevices = [];
 
 
+ let text = remoteClientID + ":" + document.getElementById("msg").value;
+client.publish(topic_sub, text);
+
 // ---------------------------------------------------------
 // FUNZIONE STATO UI
 // ---------------------------------------------------------
