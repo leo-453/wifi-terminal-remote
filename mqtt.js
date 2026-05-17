@@ -224,9 +224,9 @@ function selezionaDispositivo() {
 // INVIO MESSAGGIO AL DISPOSITIVO
 // ---------------------------------------------------------
 function publishMessage() {
-    let text = document.getElementById("msg").value;
+    let cmd = document.getElementById("msg").value;
 
-    if (!text) {
+    if (!cmd) {
         alert("Inserisci un messaggio");
         return;
     }
@@ -241,13 +241,14 @@ function publishMessage() {
         return;
     }
 
+    let text = remoteClientID + ":" + cmd;   // <=== FORMATO CORRETTO
+
     console.log("TX →", topic_sub, ":", text);
     client.publish(topic_sub, text);
 
     document.getElementById("msg").value = "";
     document.getElementById("msg").focus();
 }
-
 
 
 // ---------------------------------------------------------
