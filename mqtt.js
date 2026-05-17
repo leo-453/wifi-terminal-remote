@@ -34,6 +34,16 @@ function setStatus(txt) {
 }
 
 
+// =====================================
+// Generazione clientID remoto persistente
+// =====================================
+let remoteClientID = localStorage.getItem("remoteClientID");
+if (!remoteClientID) {
+    remoteClientID = "REMOTE_" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    localStorage.setItem("remoteClientID", remoteClientID);
+}
+
+
 // ---------------------------------------------------------
 // CONNESSIONE AL BROKER MQTT
 // ---------------------------------------------------------
