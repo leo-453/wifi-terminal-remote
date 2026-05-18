@@ -53,6 +53,14 @@ function connectMQTT() {
         reconnectPeriod: 2000,
         connectTimeout: 5000,
         keepalive: 30
+
+        will: {
+        topic: `wifi_terminal/${remoteClientID}/status`,
+        payload: "REMOTE_DISCONNECTED",
+        qos: 1,
+        retain: false
+    }
+        
     });
 
     client.on('connect', () => {
@@ -69,6 +77,13 @@ function connectMQTT() {
             client.subscribe(topic_pub);
             old_topic_pub = topic_pub;
         }
+       client.publish(
+    `wifi_terminal/${remoteClientID}/status`,
+    "REMOTE_CONNECTED",
+    { qos: 1, retain: false }
+);
+
+        
     });
 
     client.on('reconnect', () => {
@@ -141,8 +156,8 @@ function onMessageArrived(topic, payload) {
 
         if (mqttReady) {
             const controlTopic = `wifi_terminal/${id}/control`;
-            client.publish(controlTopic, "PING");
-            console.log("PING inviato a", controlTopic);
+            //client.publish(controlTopic, "PING");
+            //console.log("PING inviato a", controlTopic);
         }
 
         return;
@@ -266,6 +281,17 @@ window.addEventListener("load", () => {
         }
     });
 });
+
+window.addEventListener("beforeunload", () => {
+    if (mqttReady) {
+        client.publish(
+            `wifi_terminal/${remoteClientID}/status`,
+            "REMOTE_DISCONNECTED",
+            { qos: 1, retain: false }
+        );
+    }
+});
+
 
 window.selezionaDispositivo = selezionaDispositivo;
 window.publishMessage = publishMessage;
