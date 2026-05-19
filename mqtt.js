@@ -44,6 +44,7 @@ function setStatus(txt) {
 // ---------------------------------------------------------
 // CONNESSIONE AL BROKER MQTT
 // ---------------------------------------------------------
+
 function connectMQTT() {
     console.log("Connessione al broker MQTT...");
 
@@ -52,15 +53,15 @@ function connectMQTT() {
         password: mqtt_pass,
         reconnectPeriod: 2000,
         connectTimeout: 5000,
-        keepalive: 30
+        keepalive: 30,
 
+        // LWT: se la UI remota si chiude male
         will: {
-        topic: `wifi_terminal/${remoteClientID}/status`,
-        payload: "REMOTE_DISCONNECTED",
-        qos: 1,
-        retain: false
-    }
-        
+            topic: `wifi_terminal/${remoteClientID}/status`,
+            payload: "REMOTE_DISCONNECTED",
+            qos: 1,
+            retain: false
+        }
     });
 
     client.on('connect', () => {
@@ -68,39 +69,34 @@ function connectMQTT() {
         console.log("MQTT connesso");
         setStatus("connesso");
 
+        // Annuncio presenza remota
+        client.publish(
+            `wifi_terminal/${remoteClientID}/status`,
+            "REMOTE_CONNECTED",
+            { qos: 1, retain: false }
+        );
+
         client.subscribe(announce_topic);
         console.log("Sottoscritto a:", announce_topic);
 
-        // Se un dispositivo era già selezionato → risottoscrivi
         if (topic_pub) {
-            console.log("MQTT connesso → mi iscrivo a", topic_pub);
             client.subscribe(topic_pub);
             old_topic_pub = topic_pub;
         }
-       client.publish(
-    `wifi_terminal/${remoteClientID}/status`,
-    "REMOTE_CONNECTED",
-    { qos: 1, retain: false }
-);
-
-        
     });
 
     client.on('reconnect', () => {
         mqttReady = false;
-        console.warn("MQTT: riconnessione...");
         setStatus("riconnessione...");
     });
 
     client.on('close', () => {
         mqttReady = false;
-        console.warn("MQTT: connessione chiusa");
         setStatus("disconnesso");
     });
 
     client.on('error', (err) => {
         mqttReady = false;
-        console.error("MQTT errore:", err);
         setStatus("errore");
     });
 
@@ -108,7 +104,6 @@ function connectMQTT() {
         onMessageArrived(topic, payload.toString());
     });
 }
-
 
 
 // ---------------------------------------------------------
