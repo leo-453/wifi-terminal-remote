@@ -232,10 +232,10 @@ function publishMessage() {
         return;
     }
 
-    let text = cmd;   // formato semplice e stabile
+    //let text = cmd;   // formato semplice e stabile
 
-    console.log("TX →", topic_sub, ":", text);
-    client.publish(topic_sub, text);
+    console.log("TX →", topic_sub, ":", cmd); // trasmette verso ESP
+    client.publish(topic_sub, cmd);
 
     document.getElementById("msg").value = "";
     document.getElementById("msg").focus();
