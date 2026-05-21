@@ -234,7 +234,7 @@ function publishMessage() {
 
     //let text = cmd;   // formato semplice e stabile
 
-    console.log("TX →", topic_sub, ":", cmd); // trasmette verso ESP
+    console.log("TX →", topic_sub, ":", cmd); // trasmette verso ESP TX → wifi_terminal/B2E45/rx : lg
     client.publish(topic_sub, cmd);
 
     document.getElementById("msg").value = "";
