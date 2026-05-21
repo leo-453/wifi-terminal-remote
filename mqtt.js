@@ -251,8 +251,8 @@ function publishMessage() {
         return;
     }
 
-    let text = remoteClientID + ":" + cmd;   // <=== FORMATO CORRETTO
-    //    let text = cmd;  
+    //let text = remoteClientID + ":" + cmd;   // <=== FORMATO CORRETTO
+    let text = cmd;  
 
     console.log("TX →", topic_sub, ":", text);
     client.publish(topic_sub, text);
