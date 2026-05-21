@@ -1,9 +1,9 @@
 // ---------------------------------------------------------
 // CONFIGURAZIONE BROKER MQTT (WebSocket)
 // ---------------------------------------------------------
-broker = "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud";
-port = 8884;
-useTLS = true;
+const broker = "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud";
+const port = 8884;
+const useTLS = true;
 
 const mqtt_user = "leo453";
 const mqtt_pass = "bsfg805NG";
@@ -23,9 +23,9 @@ let old_topic_pub = null;
 let discoveredDevices = [];
 
 
-// =====================================
-// Generazione clientID remoto persistente
-// =====================================
+// ---------------------------------------------------------
+// CLIENT ID REMOTO (persistente, ma NON usato nei messaggi)
+// ---------------------------------------------------------
 let remoteClientID = localStorage.getItem("remoteClientID");
 if (!remoteClientID) {
     remoteClientID = "REMOTE_" + Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -34,7 +34,7 @@ if (!remoteClientID) {
 
 
 // ---------------------------------------------------------
-// FUNZIONE STATO UI
+// STATO UI
 // ---------------------------------------------------------
 function setStatus(txt) {
     document.getElementById("status").innerText = txt;
@@ -44,7 +44,6 @@ function setStatus(txt) {
 // ---------------------------------------------------------
 // CONNESSIONE AL BROKER MQTT
 // ---------------------------------------------------------
-
 function connectMQTT() {
     console.log("Connessione al broker MQTT...");
 
@@ -55,7 +54,6 @@ function connectMQTT() {
         connectTimeout: 5000,
         keepalive: 30,
 
-        // LWT: se la UI remota si chiude male
         will: {
             topic: `wifi_terminal/${remoteClientID}/status`,
             payload: "REMOTE_DISCONNECTED",
@@ -69,16 +67,18 @@ function connectMQTT() {
         console.log("MQTT connesso");
         setStatus("connesso");
 
-        // Annuncio presenza remota
+        // Annuncio presenza remota (non usato dall’ESP, ma innocuo)
         client.publish(
             `wifi_terminal/${remoteClientID}/status`,
             "REMOTE_CONNECTED",
             { qos: 1, retain: false }
         );
 
+        // Sottoscrizione agli annunci dei dispositivi
         client.subscribe(announce_topic);
         console.log("Sottoscritto a:", announce_topic);
 
+        // Se un device era già selezionato → risottoscrivi
         if (topic_pub) {
             client.subscribe(topic_pub);
             old_topic_pub = topic_pub;
@@ -95,7 +95,7 @@ function connectMQTT() {
         setStatus("disconnesso");
     });
 
-    client.on('error', (err) => {
+    client.on('error', () => {
         mqttReady = false;
         setStatus("errore");
     });
@@ -111,18 +111,14 @@ function connectMQTT() {
 // ---------------------------------------------------------
 function onMessageArrived(topic, payload) {
 
-    // -----------------------------
-    // MESSAGGI DAL DISPOSITIVO SELEZIONATO
-    // -----------------------------
+    // Messaggi dal dispositivo selezionato
     if (topic === topic_pub) {
 
-        // Se inizia con "/" → è per il Plotter
         if (payload.startsWith("/")) {
             handlePlotterData(payload);
             return;
         }
 
-        // Altrimenti → Output
         console.log("RX:", payload);
         document.getElementById("lastMessage").innerText = payload;
 
@@ -133,9 +129,7 @@ function onMessageArrived(topic, payload) {
         return;
     }
 
-    // -----------------------------
-    // ANNUNCIO DISPOSITIVO
-    // -----------------------------
+    // Annuncio dispositivi
     if (topic === announce_topic && payload.startsWith("HELLO:")) {
 
         const parts = payload.split(":");
@@ -148,17 +142,9 @@ function onMessageArrived(topic, payload) {
         }
 
         console.log("Dispositivo rilevato:", name, id);
-
-        if (mqttReady) {
-            const controlTopic = `wifi_terminal/${id}/control`;
-            //client.publish(controlTopic, "PING");
-            //console.log("PING inviato a", controlTopic);
-        }
-
         return;
     }
 }
-
 
 
 // ---------------------------------------------------------
@@ -182,7 +168,6 @@ function aggiornaListaDispositivi() {
 }
 
 
-
 // ---------------------------------------------------------
 // SELEZIONE DISPOSITIVO
 // ---------------------------------------------------------
@@ -202,13 +187,11 @@ function selezionaDispositivo() {
     topic_pub = `wifi_terminal/${deviceID}/tx`;
     topic_sub = `wifi_terminal/${deviceID}/rx`;
 
-    // Se MQTT non è ancora connesso → aspetta
     if (!mqttReady) {
         console.warn("MQTT non pronto, rimando subscribe...");
         return;
     }
 
-    // Disiscrizione dal vecchio topic
     if (old_topic_pub) {
         client.unsubscribe(old_topic_pub);
     }
@@ -221,13 +204,11 @@ function selezionaDispositivo() {
     document.getElementById("selectedDevice").innerText =
         `${deviceName} (${deviceID})`;
 
-    // Reset plotter
     if (typeof plotterBuf !== "undefined") {
         plotterBuf = [];
         drawPlotter();
     }
 }
-
 
 
 // ---------------------------------------------------------
@@ -251,8 +232,7 @@ function publishMessage() {
         return;
     }
 
-    //let text = remoteClientID + ":" + cmd;   // <=== FORMATO CORRETTO
-    let text = cmd;  
+    let text = cmd;   // formato semplice e stabile
 
     console.log("TX →", topic_sub, ":", text);
     client.publish(topic_sub, text);
@@ -263,11 +243,23 @@ function publishMessage() {
 
 
 // ---------------------------------------------------------
+// PING PERIODICO (necessario per la FSM dell’ESP)
+// ---------------------------------------------------------
+setInterval(() => {
+    if (mqttReady && deviceID) {
+        const controlTopic = `wifi_terminal/${deviceID}/control`;
+        client.publish(controlTopic, "PING");
+        console.log("PING →", controlTopic);
+    }
+}, 10000);   // ogni 10 secondi
+
+
+// ---------------------------------------------------------
 // AVVIO AUTOMATICO
 // ---------------------------------------------------------
 window.addEventListener("load", () => {
 
-    connectMQTT();   // UNA sola volta
+    connectMQTT();
 
     const input = document.getElementById("msg");
     input.addEventListener("keydown", (ev) => {
@@ -291,4 +283,3 @@ window.addEventListener("beforeunload", () => {
 
 window.selezionaDispositivo = selezionaDispositivo;
 window.publishMessage = publishMessage;
-
