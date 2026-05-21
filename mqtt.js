@@ -184,8 +184,8 @@ function selezionaDispositivo() {
     const fullLabel = sel.options[sel.selectedIndex].textContent;
     deviceName = fullLabel.split(" (")[0];
 
-    topic_pub = `wifi_terminal/${deviceID}/tx`;  // UI INVIA a ESP
-    topic_sub = `wifi_terminal/${deviceID}/rx`;  // UI RICEVE
+    topic_pub = `wifi_terminal/${deviceID}/rx`;  // UI RICEVE
+    topic_sub = `wifi_terminal/${deviceID}/tx`;  // UI TRASMETTE A ESP
 
     if (!mqttReady) {
         console.warn("MQTT non pronto, rimando subscribe...");
