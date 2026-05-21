@@ -199,8 +199,8 @@ function selezionaDispositivo() {
     const fullLabel = sel.options[sel.selectedIndex].textContent;
     deviceName = fullLabel.split(" (")[0];
 
-    topic_pub = `wifi_terminal/${deviceID}/rx`;
-    topic_sub = `wifi_terminal/${deviceID}/tx`;
+    topic_pub = `wifi_terminal/${deviceID}/tx`;
+    topic_sub = `wifi_terminal/${deviceID}/rx`;
 
     // Se MQTT non è ancora connesso → aspetta
     if (!mqttReady) {
