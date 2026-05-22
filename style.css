@@ -61,6 +61,11 @@ h3 {
   box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
 }
 
+/* Sezione ricezione: padding superiore ridotto */
+.section.ricezione {
+  padding-top: 8px;
+}
+
 /* Input */
 select, input[type="text"], input[type="number"] {
   width: 100%;
