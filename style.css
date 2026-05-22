@@ -40,6 +40,11 @@ h3 {
   color: #111;
 }
 
+.section.ricezione {
+    padding-top: 4px;
+}
+
+
 /* Riduzione margine titolo Ricezione */
 .section.ricezione h3 {
     margin-top: 0;    
