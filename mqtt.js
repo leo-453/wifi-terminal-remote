@@ -114,14 +114,15 @@ function onMessageArrived(topic, payload) {
     // Messaggi dal dispositivo selezionato
     if (topic === topic_pub) {
 
+        // Dati per il plotter
         if (payload.startsWith("/")) {
             handlePlotterData(payload);
             return;
         }
 
         console.log("RX:", payload);
-        document.getElementById("lastMessage").innerText = payload;
 
+        // Aggiorna solo il log (lastMessage non esiste più)
         if (typeof addMessage === "function") {
             addMessage(payload);
         }
