@@ -42,6 +42,7 @@ h3 {
 
 /* Riduzione margine titolo Ricezione */
 .section.ricezione h3 {
+    margin-top: 0;    
   margin-bottom: 4px;
 }
 
