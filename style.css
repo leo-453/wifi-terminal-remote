@@ -54,6 +54,7 @@ h3 {
 .rx-controls {
     display: flex;
     justify-content: flex-end;
+     width: 100%;
     margin: 0;          /* ← elimina margini verticali */
     padding: 0;         /* ← evita spazi residui */
 }
