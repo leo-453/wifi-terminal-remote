@@ -43,7 +43,6 @@ h3 {
     padding-top: 4px;
 }
 
-/* Riduzione margine titolo Ricezione */
 .section.ricezione h3 {
     margin-top: 0;
     margin-bottom: 4px;
@@ -86,15 +85,13 @@ h3 {
   box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
 }
 
-/* Sezione ricezione: padding superiore ridotto */
-.section.ricezione {
-  padding-top: 4px;
-}
-
 /* =========================================================
    INPUT
    ========================================================= */
-select, input[type="text"], input[type="number"] {
+
+/* Input generici */
+select,
+input[type="text"] {
   width: 100%;
   padding: 12px;
   border: 1px solid #000;
@@ -102,6 +99,18 @@ select, input[type="text"], input[type="number"] {
   font-size: 15px;
   margin-bottom: 10px;
   background-color: #fff;
+}
+
+/* Input numerico del plotter: NON deve essere full-width */
+#plotterMaxInput {
+  width: 70px;
+  padding: 6px;
+  margin: 0;
+  border: 1px solid #000;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  text-align: center;
 }
 
 #msg {
@@ -133,7 +142,6 @@ button:hover {
   color: #fff;
 }
 
-/* Pulsanti trasmissione */
 .transmit-buttons {
   display: flex;
   gap: 8px;
@@ -189,29 +197,34 @@ button:hover {
   pointer-events: none;
 }
 
-/* ⭐ FIX BARRA PULSANTI PLOTTER */
+/* ⭐ Barra inferiore del plotter */
+#plotterInfo {
+    color: white;
+    padding: 8px;
+    background: #111;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ⭐ Barra pulsanti */
 #plotterButtons {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 8px;
-    white-space: nowrap;   /* ← impedisce il wrap */
+    white-space: nowrap;
 }
 
-/* ⭐ FIX MENU FS (si espande solo quando visibile) */
+/* ⭐ Pannello FS */
 #plotterFSControl {
     display: none;
     align-items: center;
     gap: 6px;
-    min-width: 160px;      /* ← spazio garantito per UP/DOWN */
 }
 
 #plotterFSControl.show {
-    display: inline-flex;       /* quando attivo */
-}
-/* Input FS */
-#plotterMaxInput {
-    width: 60px;
+    display: inline-flex;
 }
 
 /* =========================================================
