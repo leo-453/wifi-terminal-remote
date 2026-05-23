@@ -200,12 +200,15 @@ button:hover {
 
 /* ⭐ FIX MENU FS (si espande solo quando visibile) */
 #plotterFSControl {
-    display: inline-flex;
+    display: none;
     align-items: center;
     gap: 6px;
     min-width: 160px;      /* ← spazio garantito per UP/DOWN */
 }
 
+#plotterFSControl.show {
+    display: inline-flex;       /* quando attivo */
+}
 /* Input FS */
 #plotterMaxInput {
     width: 60px;
