@@ -1,4 +1,5 @@
 console.log("MQTT JS loaded");
+alert("VERSIONE NUOVA SCRIPT.JS");
 
 // ===============================
 // PLOTTER REMOTO MQTT - VARIABILI
