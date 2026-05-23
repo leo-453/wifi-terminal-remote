@@ -65,29 +65,30 @@ window.addEventListener("load", () => {
   const fsInput = document.getElementById("plotterMaxInput");
   if (fsInput) fsInput.value = plotterMax;
 
-  // Toggle FS
-  document.getElementById("plotterFS").onclick = () => {
+// Toggle FS
+document.getElementById("plotterFS").onclick = () => {
     document.getElementById("plotterFSControl").classList.toggle("show");
-  };
+};
 
-  // SET FS
-  document.getElementById("plotterSetMax").onclick = () => {
+// SET FS
+document.getElementById("plotterSetMax").onclick = () => {
     const v = Number(fsInput.value);
     if (v > 0) {
-      plotterMax = v;
-      localStorage.setItem("plotterMax", v);
-      plotterBuf = plotterBuf.map(() => []);
-      drawPlotter();
+        plotterMax = v;
+        localStorage.setItem("plotterMax", v);
+        plotterBuf = plotterBuf.map(() => []);
+        drawPlotter();
     }
     document.getElementById("plotterFSControl").classList.remove("show");
-  };
+};
 
-  // ESC chiude FS
-  document.addEventListener("keydown", (ev) => {
+// ESC chiude FS
+document.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") {
-      document.getElementById("plotterFSControl").classList.remove("show");
+        document.getElementById("plotterFSControl").classList.remove("show");
     }
-  });
+});
+
 
   // RECORD
   document.getElementById("plotterRecord").onclick = () => {
