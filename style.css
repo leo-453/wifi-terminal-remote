@@ -184,11 +184,19 @@ button:hover {
 }
 
 #plotterDragBar {
-  background: #222;
-  border-bottom: 1px solid #444;
-  height: 30px;
-  cursor: move;
+    background: #222;
+    border-bottom: 1px solid #444;
+    height: 30px;
+    cursor: move;
+    position: relative;
+    z-index: 10;   /* resta sopra SOLO la parte alta */
 }
+
+#plotterCanvasWrapper {
+    position: relative;
+    z-index: 1;    /* sotto i pulsanti */
+}
+
 
 #plotterCanvas {
   width: 100%;
@@ -209,12 +217,10 @@ button:hover {
 
 /* ⭐ Barra pulsanti */
 #plotterButtons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
+    position: relative;
+    z-index: 20;   /* i pulsanti stanno SOPRA la barra */
 }
+
 
 /* ⭐ Pannello FS */
 #plotterFSControl {
