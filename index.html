@@ -46,7 +46,6 @@
     <div class="section ricezione" style="background:#f8f9fa;">
         <h3>📥 Ricezione</h3>
         <div class="rx-controls">
-            
             <button onclick="clearMessageLog()">Pulisci</button>
         </div>
 
@@ -58,24 +57,27 @@
 <!-- PLOTTER -->
 <div id="plotterPanel" style="display:none;">
     <div id="plotterDragBar"></div>
+
     <canvas id="plotterCanvas" width="600" height="300"></canvas>
-    <div id="plotterInfo" style="color:white; padding:8px; background:#111; display:flex; justify-content:space-between;">
+
+    <div id="plotterInfo">
         <span id="plotterValues"></span>
-        
-      <div id="plotterButtons">
+
+        <div id="plotterButtons">
             <button id="plotterRunStop">STOP</button>
             <button id="plotterFS">FS</button>
-          
+
+            <!-- ⭐ Pannello FS corretto -->
             <span id="plotterFSControl">
-                <input id="plotterMaxInput" type="number" style="width:60px;">
+                <span>FS:</span>
+                <input id="plotterMaxInput" type="number">
                 <button id="plotterSetMax">Set</button>
             </span>
-            
-            <button id="plotterRecord">REC</button>         
+
+            <button id="plotterRecord">REC</button>
         </div>
     </div>
 </div>
 
 </body>
 </html>
-
