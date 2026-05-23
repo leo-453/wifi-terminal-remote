@@ -61,14 +61,17 @@
     <canvas id="plotterCanvas" width="600" height="300"></canvas>
     <div id="plotterInfo" style="color:white; padding:8px; background:#111; display:flex; justify-content:space-between;">
         <span id="plotterValues"></span>
-        <div style="display:flex; gap:5px;">
+        
+      <div id="plotterButtons">
             <button id="plotterRunStop">STOP</button>
             <button id="plotterFS">FS</button>
+          
             <span id="plotterFSControl" style="display:none;">
                 <input id="plotterMaxInput" type="number" style="width:60px;">
                 <button id="plotterSetMax">Set</button>
             </span>
-            <button id="plotterRecord">REC</button>
+            
+            <button id="plotterRecord">REC</button>         
         </div>
     </div>
 </div>
