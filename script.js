@@ -1,7 +1,5 @@
 console.log("MQTT Remote Terminal loaded");
 
-
-
 // ===============================
 // PLOTTER REMOTO MQTT - VARIABILI
 // ===============================
@@ -11,7 +9,6 @@ let plotterMax = Number(localStorage.getItem("plotterMax")) || 4095;
 let plotterRecording = false;
 let plotterCSV = [];
 let plotterLastValues = [];
-
 
 // ===============================
 // BUFFER MESSAGGI + STORICO
@@ -50,7 +47,6 @@ function sendMessage() {
   document.getElementById("msg").focus();
 }
 
-
 // ===============================
 // INIT UI
 // ===============================
@@ -66,42 +62,33 @@ window.addEventListener("load", () => {
   });
 
   // Inizializza FS
-  // Inizializza FS
-const fsInput = document.getElementById("plotterMaxInput");
-if (fsInput) fsInput.value = plotterMax;
+  const fsInput = document.getElementById("plotterMaxInput");
+  if (fsInput) fsInput.value = plotterMax;
 
-// Toggle FS
-document.getElementById("plotterFS").onclick = () => {
+  // Toggle FS
+  document.getElementById("plotterFS").onclick = () => {
     document.getElementById("plotterFSControl").classList.toggle("show");
-};
+  };
 
-// SET FS
-document.getElementById("plotterSetMax").onclick = () => {
+  // SET FS
+  document.getElementById("plotterSetMax").onclick = () => {
     const v = Number(fsInput.value);
     if (v > 0) {
-        plotterMax = v;
-        localStorage.setItem("plotterMax", v);
-        plotterBuf = plotterBuf.map(() => []);
-        drawPlotter();
+      plotterMax = v;
+      localStorage.setItem("plotterMax", v);
+      plotterBuf = plotterBuf.map(() => []);
+      drawPlotter();
     }
     document.getElementById("plotterFSControl").classList.remove("show");
-};
+  };
 
-// ESC chiude FS
-document.addEventListener("keydown", (ev) => {
+  // ESC chiude FS
+  document.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") {
-        document.getElementById("plotterFSControl").classList.remove("show");
+      document.getElementById("plotterFSControl").classList.remove("show");
     }
-});
+  });
 
-document.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape") {
-        const fsCtrl = document.getElementById("plotterFSControl");
-        fsCtrl.style.display = "none";
-    }
-});
-
-  
   // RECORD
   document.getElementById("plotterRecord").onclick = () => {
     plotterRecording = !plotterRecording;
@@ -132,50 +119,47 @@ document.addEventListener("keydown", (ev) => {
 // ===============================
 document.getElementById("plotterToggle").onclick = () => {
 
-    const panel = document.getElementById("plotterPanel");
-    const btn   = document.getElementById("plotterToggle");
-    const fsCtrl = document.getElementById("plotterFSControl");
-    const recBtn = document.getElementById("plotterRecord");
+  const panel = document.getElementById("plotterPanel");
+  const btn   = document.getElementById("plotterToggle");
+  const fsCtrl = document.getElementById("plotterFSControl");
+  const recBtn = document.getElementById("plotterRecord");
 
-    // Se è chiuso → apri
-    if (panel.style.display === "none" || panel.style.display === "") {
+  // Se è chiuso → apri
+  if (panel.style.display === "none" || panel.style.display === "") {
 
-        panel.style.display = "block";
-        btn.textContent = "Plotter_off";
+      panel.style.display = "block";
+      btn.textContent = "Plotter_off";
 
-        // Chiudi pannello FS
-        fsCtrl.style.display = "none";
+      // Chiudi pannello FS
+      fsCtrl.classList.remove("show");
 
-    } else {
+  } else {
 
-        // Se è aperto → chiudi
-        panel.style.display = "none";
-        btn.textContent = "Plotter";
+      // Se è aperto → chiudi
+      panel.style.display = "none";
+      btn.textContent = "Plotter";
 
-        // Chiudi pannello FS
-        fsCtrl.style.display = "none";
+      // Chiudi pannello FS
+      fsCtrl.classList.remove("show");
 
-        // Se stiamo registrando → stop + salva CSV
-        if (plotterRecording) {
-            plotterRecording = false;
-            recBtn.style.background = "#333";
-            recBtn.textContent = "Record";
+      // Se stiamo registrando → stop + salva CSV
+      if (plotterRecording) {
+          plotterRecording = false;
+          recBtn.style.background = "#333";
+          recBtn.textContent = "Record";
 
-            if (plotterCSV.length > 0) {
-                const csvContent = "data:text/csv;charset=utf-8," + plotterCSV.join("\n");
-                const a = document.createElement("a");
-                a.href = encodeURI(csvContent);
-                a.download = "plot.csv";
-                a.click();
-            }
+          if (plotterCSV.length > 0) {
+              const csvContent = "data:text/csv;charset=utf-8," + plotterCSV.join("\n");
+              const a = document.createElement("a");
+              a.href = encodeURI(csvContent);
+              a.download = "plot.csv";
+              a.click();
+          }
 
-            plotterCSV = [];
-        }
-    }
+          plotterCSV = [];
+      }
+  }
 };
-
-
-
 
 // ===============================
 // HANDLE PLOTTER DATA
@@ -208,7 +192,6 @@ function handlePlotterData(line) {
   drawPlotter();
 }
 
-
 // ===============================
 // VALORI INFERIORI
 // ===============================
@@ -223,24 +206,19 @@ function updatePlotterValues(values) {
   document.getElementById("plotterValues").innerHTML = html;
 }
 
-
 // ===============================
 // DRAW PLOTTER
 // ===============================
-
 function drawPlotter() {
-
   const canvas = document.getElementById("plotterCanvas");
   const ctx = canvas.getContext("2d");
 
   const W = canvas.width;
   const H = canvas.height;
 
-  // Sfondo nero
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, W, H);
 
-  // Griglia
   ctx.strokeStyle = "#808080";
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 3]);
@@ -264,7 +242,6 @@ function drawPlotter() {
 
   ctx.setLineDash([]);
 
-  // Assi
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 2;
 
@@ -278,12 +255,10 @@ function drawPlotter() {
   ctx.lineTo(1, H);
   ctx.stroke();
 
-  // FS
   ctx.fillStyle = "#fff";
   ctx.font = "14px monospace";
   ctx.fillText("FS: " + plotterMax, 10, 20);
 
-  // Curve
   const colors = ["red", "cyan", "yellow", "lime"];
 
   plotterBuf.forEach((curve, idx) => {
@@ -305,8 +280,6 @@ function drawPlotter() {
   });
 }
 
-
-
 // ===============================
 // DRAG DEL PANNELLO PLOTTER
 // ===============================
@@ -321,14 +294,13 @@ function drawPlotter() {
     if (!box.style.left) box.style.left = "100px";
     if (!box.style.top)  box.style.top  = "100px";
 
-    // 👉 Drag SOLO sulla barra superiore
     bar.addEventListener("mousedown", e => {
         dragging = true;
         startX = e.clientX;
         startY = e.clientY;
         origLeft = parseInt(box.style.left, 10);
         origTop  = parseInt(box.style.top, 10);
-        e.preventDefault();   // qui va bene!
+        e.preventDefault();
     });
 
     document.addEventListener("mousemove", e => {
@@ -341,9 +313,6 @@ function drawPlotter() {
 
     document.addEventListener("mouseup", () => dragging = false);
 })();
-
-
-
 
 // ===============================
 // EXPORT
