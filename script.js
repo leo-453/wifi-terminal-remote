@@ -67,9 +67,12 @@ window.addEventListener("load", () => {
 
 // Toggle FS
 document.getElementById("plotterFS").onclick = () => {
+    console.log("FS cliccato");
     document.getElementById("plotterFSControl").classList.toggle("show");
 };
 
+
+  
 // SET FS
 document.getElementById("plotterSetMax").onclick = () => {
     const v = Number(fsInput.value);
