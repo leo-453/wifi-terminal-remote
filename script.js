@@ -66,37 +66,33 @@ window.addEventListener("load", () => {
   });
 
   // Inizializza FS
-  const fsInput = document.getElementById("plotterMaxInput");
-  if (fsInput) fsInput.value = plotterMax;
+  // Inizializza FS
+const fsInput = document.getElementById("plotterMaxInput");
+if (fsInput) fsInput.value = plotterMax;
 
-  // RUN/STOP
-  document.getElementById("plotterRunStop").onclick = () => {
-    plotterRunning = !plotterRunning;
-    document.getElementById("plotterRunStop").textContent =
-      plotterRunning ? "STOP" : "RUN";
-  };
+// Toggle FS
+document.getElementById("plotterFS").onclick = () => {
+    document.getElementById("plotterFSControl").classList.toggle("show");
+};
 
-  // FS toggle
-  document.getElementById("plotterFS").onclick = () => {
-    const fsCtrl = document.getElementById("plotterFSControl");
-    fsCtrl.style.display =
-      (fsCtrl.style.display === "none" || fsCtrl.style.display === "")
-        ? "inline-block"
-        : "none";
-  };
-
-  // SET FS
-  document.getElementById("plotterSetMax").onclick = () => {
-    const v = Number(document.getElementById("plotterMaxInput").value);
+// SET FS
+document.getElementById("plotterSetMax").onclick = () => {
+    const v = Number(fsInput.value);
     if (v > 0) {
-      plotterMax = v;
-      localStorage.setItem("plotterMax", v);
-      plotterBuf = plotterBuf.map(() => []);
-      drawPlotter();
+        plotterMax = v;
+        localStorage.setItem("plotterMax", v);
+        plotterBuf = plotterBuf.map(() => []);
+        drawPlotter();
     }
-     // Chiudi pannello FS
-    document.getElementById("plotterFSControl").style.display = "none";
-  };
+    document.getElementById("plotterFSControl").classList.remove("show");
+};
+
+// ESC chiude FS
+document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") {
+        document.getElementById("plotterFSControl").classList.remove("show");
+    }
+});
 
 document.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") {
