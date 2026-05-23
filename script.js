@@ -1,4 +1,4 @@
-console.log("MQTT Remote Terminal loaded");
+console.log("MQTT JS loaded");
 
 // ===============================
 // PLOTTER REMOTO MQTT - VARIABILI
