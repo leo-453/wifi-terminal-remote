@@ -19,6 +19,12 @@ let deviceName = null;
 let topic_pub = null;   // ESP → UI
 let topic_sub = null;   // UI → ESP
 
+// ⭐ Topic OTA
+let topic_ota_begin = null;
+let topic_ota_chunk = null;
+let topic_ota_end   = null;
+let topic_ota_status = null;
+
 let old_topic_pub = null;
 let discoveredDevices = [];
 
@@ -67,21 +73,23 @@ function connectMQTT() {
         console.log("MQTT connesso");
         setStatus("connesso");
 
-        // Annuncio presenza remota (non usato dall’ESP, ma innocuo)
         client.publish(
             `wifi_terminal/${remoteClientID}/status`,
             "REMOTE_CONNECTED",
             { qos: 1, retain: false }
         );
 
-        // Sottoscrizione agli annunci dei dispositivi
         client.subscribe(announce_topic);
         console.log("Sottoscritto a:", announce_topic);
 
-        // Se un device era già selezionato → risottoscrivi
         if (topic_pub) {
             client.subscribe(topic_pub);
             old_topic_pub = topic_pub;
+        }
+
+        if (topic_ota_status) {
+            client.subscribe(topic_ota_status);
+            console.log("Sottoscritto OTA:", topic_ota_status);
         }
     });
 
@@ -111,10 +119,19 @@ function connectMQTT() {
 // ---------------------------------------------------------
 function onMessageArrived(topic, payload) {
 
+    // ⭐ OTA STATUS
+    if (topic === topic_ota_status) {
+        console.log("OTA STATUS:", payload);
+
+        if (window.handleOTAStatus) {
+            window.handleOTAStatus(payload);
+        }
+        return;
+    }
+
     // Messaggi dal dispositivo selezionato
     if (topic === topic_pub) {
 
-        // Dati per il plotter
         if (payload.startsWith("/")) {
             handlePlotterData(payload);
             return;
@@ -122,7 +139,6 @@ function onMessageArrived(topic, payload) {
 
         console.log("RX:", payload);
 
-        // Aggiorna solo il log (lastMessage non esiste più)
         if (typeof addMessage === "function") {
             addMessage(payload);
         }
@@ -185,8 +201,15 @@ function selezionaDispositivo() {
     const fullLabel = sel.options[sel.selectedIndex].textContent;
     deviceName = fullLabel.split(" (")[0];
 
-    topic_pub = `wifi_terminal/${deviceID}/rx`;  // UI RICEVE
-    topic_sub = `wifi_terminal/${deviceID}/tx`;  // UI TRASMETTE A ESP
+    // ⭐ Topic normali
+    topic_pub = `wifi_terminal/${deviceID}/rx`;
+    topic_sub = `wifi_terminal/${deviceID}/tx`;
+
+    // ⭐ Topic OTA
+    topic_ota_begin  = `wifi_terminal/${deviceID}/ota/begin`;
+    topic_ota_chunk  = `wifi_terminal/${deviceID}/ota/chunk`;
+    topic_ota_end    = `wifi_terminal/${deviceID}/ota/end`;
+    topic_ota_status = `wifi_terminal/${deviceID}/ota/status`;
 
     if (!mqttReady) {
         console.warn("MQTT non pronto, rimando subscribe...");
@@ -199,6 +222,10 @@ function selezionaDispositivo() {
 
     client.subscribe(topic_pub);
     old_topic_pub = topic_pub;
+
+    // ⭐ Sottoscrizione OTA STATUS
+    client.subscribe(topic_ota_status);
+    console.log("Sottoscritto OTA:", topic_ota_status);
 
     console.log("Dispositivo selezionato:", deviceName, deviceID);
 
@@ -233,9 +260,7 @@ function publishMessage() {
         return;
     }
 
-    //let text = cmd;   // formato semplice e stabile
-
-    console.log("TX →", topic_sub, ":", cmd); // trasmette verso ESP TX → wifi_terminal/B2E45/rx : lg
+    console.log("TX →", topic_sub, ":", cmd);
     client.publish(topic_sub, cmd);
 
     document.getElementById("msg").value = "";
@@ -244,7 +269,7 @@ function publishMessage() {
 
 
 // ---------------------------------------------------------
-// PING PERIODICO (necessario per la FSM dell’ESP)
+// PING PERIODICO
 // ---------------------------------------------------------
 setInterval(() => {
     if (mqttReady && deviceID) {
@@ -252,7 +277,7 @@ setInterval(() => {
         client.publish(controlTopic, "PING");
         console.log("PING →", controlTopic);
     }
-}, 10000);   // ogni 10 secondi
+}, 10000);
 
 
 // ---------------------------------------------------------
