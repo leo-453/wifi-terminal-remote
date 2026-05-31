@@ -346,9 +346,8 @@ document.getElementById("btnStartOTA").addEventListener("click", () => {
 
 // ⭐ Funzione OTA MQTT
 function startOTA_MQTT(lines) {
-console.log("OTA BEGIN →", selectedDevice + "/ota/begin");
 
-    client.publish(selectedDevice + "/ota/begin", "");
+    client.publish("wifi_terminal/" + selectedDevice + "/ota/begin", "");
 
     let index = 0;
     const total = lines.length;
@@ -357,43 +356,20 @@ console.log("OTA BEGIN →", selectedDevice + "/ota/begin");
         if (index < total) {
 
             const line = lines[index];
-            client.publish(selectedDevice + "/ota/chunk", line);
+            client.publish("wifi_terminal/" + selectedDevice + "/ota/chunk", line);
 
             index++;
             document.getElementById("otaProgress").value = (index / total) * 100;
 
             setTimeout(sendNext, 2);
         } else {
-            client.publish(selectedDevice + "/ota/end", "");
+            client.publish("wifi_terminal/" + selectedDevice + "/ota/end", "");
         }
     }
 
     sendNext();
 }
 
-// ⭐ Gestione messaggi OTA MQTT
-client.on("message", (topic, payload) => {
-
-    if (!topic.endsWith("/ota/status")) return;
-
-    const msg = payload.toString();
-
-    if (msg === "OTA_READY") {
-        document.getElementById("otaStatus").innerText = "Pronto…";
-    }
-
-    if (msg === "OTA_START") {
-        document.getElementById("otaStatus").innerText = "Programmazione in corso…";
-    }
-
-    if (msg === "OTA_COMPLETE") {
-        document.getElementById("otaStatus").innerText = "Completato!";
-    }
-
-    if (msg.startsWith("OTA_ERROR")) {
-        document.getElementById("otaStatus").innerText = "Errore: " + msg;
-    }
-});
 
 // ===============================
 // EXPORT
