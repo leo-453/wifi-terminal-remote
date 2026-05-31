@@ -319,6 +319,71 @@ function drawPlotter() {
     document.addEventListener("mouseup", () => dragging = false);
 })();
 
+// Apri popup
+document.getElementById("btnUpload").addEventListener("click", () => {
+    document.getElementById("otaPopup").style.display = "flex";
+});
+
+// Chiudi popup
+document.getElementById("btnCloseOTA").addEventListener("click", () => {
+    document.getElementById("otaPopup").style.display = "none";
+});
+
+// Avvio OTA
+document.getElementById("btnStartOTA").addEventListener("click", () => {
+    const fileInput = document.getElementById("hexFileInput");
+    const file = fileInput.files[0];
+    if (!file) {
+        alert("Seleziona un file HEX");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const lines = e.target.result.split(/\r?\n/);
+        startOTA(lines);
+    };
+    reader.readAsText(file);
+});
+
+// Invio OTA via WebSocket
+function startOTA(lines) {
+    ws.send("$OTA_BEGIN");
+
+    let index = 0;
+    const total = lines.length;
+
+    function sendNext() {
+        if (index < total) {
+            ws.send(lines[index]);
+            index++;
+            document.getElementById("otaProgress").value = (index / total) * 100;
+            setTimeout(sendNext, 2);
+        } else {
+            ws.send("$OTA_END");
+        }
+    }
+
+    sendNext();
+}
+
+// Gestione messaggi OTA
+ws.onmessage = function(event) {
+    const msg = event.data;
+
+    if (msg.startsWith("OTA_READY")) {
+        document.getElementById("otaStatus").innerText = "Pronto…";
+    }
+
+    if (msg.startsWith("OTA_COMPLETE")) {
+        document.getElementById("otaStatus").innerText = "Completato!";
+    }
+
+    if (msg.startsWith("OTA_ERROR")) {
+        document.getElementById("otaStatus").innerText = "Errore: " + msg;
+    }
+};
+
 // ===============================
 // EXPORT
 // ===============================
