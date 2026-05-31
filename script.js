@@ -346,6 +346,7 @@ document.getElementById("btnStartOTA").addEventListener("click", () => {
 
 // ⭐ Funzione OTA MQTT
 function startOTA_MQTT(lines) {
+console.log("OTA BEGIN →", selectedDevice + "/ota/begin");
 
     client.publish(selectedDevice + "/ota/begin", "");
 
