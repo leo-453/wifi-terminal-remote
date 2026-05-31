@@ -359,7 +359,7 @@ function startOTA_MQTT(lines) {
 
     let index = 0;
     const total = lines.length;
-    const chunkSize = 8;   // ⭐ inviamo 8 righe alla volta
+    const chunkSize = 4;   // ⭐ inviamo 8 righe alla volta
 
     function sendNext() {
         if (index < total) {
@@ -379,7 +379,7 @@ function startOTA_MQTT(lines) {
                 Math.min(100, (index / total) * 100);
 
             // ⭐ delay sicuro per HiveMQ Cloud
-            setTimeout(sendNext, 30);
+            setTimeout(sendNext, 100);
 
         } else {
 
