@@ -1,6 +1,5 @@
 console.log("MQTT JS loaded");
 
-
 // ===============================
 // PLOTTER REMOTO MQTT - VARIABILI
 // ===============================
@@ -66,33 +65,29 @@ window.addEventListener("load", () => {
   const fsInput = document.getElementById("plotterMaxInput");
   if (fsInput) fsInput.value = plotterMax;
 
-// Toggle FS
-document.getElementById("plotterFS").onclick = () => {
-    console.log("FS cliccato");
-    document.getElementById("plotterFSControl").classList.toggle("show");
-};
+  // Toggle FS
+  document.getElementById("plotterFS").onclick = () => {
+      document.getElementById("plotterFSControl").classList.toggle("show");
+  };
 
+  // SET FS
+  document.getElementById("plotterSetMax").onclick = () => {
+      const v = Number(fsInput.value);
+      if (v > 0) {
+          plotterMax = v;
+          localStorage.setItem("plotterMax", v);
+          plotterBuf = plotterBuf.map(() => []);
+          drawPlotter();
+      }
+      document.getElementById("plotterFSControl").classList.remove("show");
+  };
 
-  
-// SET FS
-document.getElementById("plotterSetMax").onclick = () => {
-    const v = Number(fsInput.value);
-    if (v > 0) {
-        plotterMax = v;
-        localStorage.setItem("plotterMax", v);
-        plotterBuf = plotterBuf.map(() => []);
-        drawPlotter();
-    }
-    document.getElementById("plotterFSControl").classList.remove("show");
-};
-
-// ESC chiude FS
-document.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape") {
-        document.getElementById("plotterFSControl").classList.remove("show");
-    }
-});
-
+  // ESC chiude FS
+  document.addEventListener("keydown", (ev) => {
+      if (ev.key === "Escape") {
+          document.getElementById("plotterFSControl").classList.remove("show");
+      }
+  });
 
   // RECORD
   document.getElementById("plotterRecord").onclick = () => {
@@ -129,25 +124,15 @@ document.getElementById("plotterToggle").onclick = () => {
   const fsCtrl = document.getElementById("plotterFSControl");
   const recBtn = document.getElementById("plotterRecord");
 
-  // Se è chiuso → apri
   if (panel.style.display === "none" || panel.style.display === "") {
-
       panel.style.display = "block";
       btn.textContent = "Plotter_off";
-
-      // Chiudi pannello FS
       fsCtrl.classList.remove("show");
-
   } else {
-
-      // Se è aperto → chiudi
       panel.style.display = "none";
       btn.textContent = "Plotter";
-
-      // Chiudi pannello FS
       fsCtrl.classList.remove("show");
 
-      // Se stiamo registrando → stop + salva CSV
       if (plotterRecording) {
           plotterRecording = false;
           recBtn.style.background = "#333";
@@ -319,6 +304,10 @@ function drawPlotter() {
     document.addEventListener("mouseup", () => dragging = false);
 })();
 
+// ===============================
+// ⭐ OTA REMOTO VIA MQTT
+// ===============================
+
 // Apri popup
 document.getElementById("btnUpload").addEventListener("click", () => {
     document.getElementById("otaPopup").style.display = "flex";
@@ -331,6 +320,7 @@ document.getElementById("btnCloseOTA").addEventListener("click", () => {
 
 // Avvio OTA
 document.getElementById("btnStartOTA").addEventListener("click", () => {
+
     const fileInput = document.getElementById("hexFileInput");
     const file = fileInput.files[0];
     if (!file) {
@@ -338,51 +328,70 @@ document.getElementById("btnStartOTA").addEventListener("click", () => {
         return;
     }
 
+    if (!window.client || !client.connected) {
+        alert("MQTT non connesso");
+        return;
+    }
+
     const reader = new FileReader();
+
     reader.onload = function(e) {
         const lines = e.target.result.split(/\r?\n/);
-        startOTA(lines);
+        startOTA_MQTT(lines);
     };
+
     reader.readAsText(file);
 });
 
-// Invio OTA via WebSocket
-function startOTA(lines) {
-    ws.send("$OTA_BEGIN");
+// ⭐ Funzione OTA MQTT
+function startOTA_MQTT(lines) {
+
+    client.publish(selectedDevice + "/ota/begin", "");
 
     let index = 0;
     const total = lines.length;
 
     function sendNext() {
         if (index < total) {
-            ws.send(lines[index]);
+
+            const line = lines[index];
+            client.publish(selectedDevice + "/ota/chunk", line);
+
             index++;
             document.getElementById("otaProgress").value = (index / total) * 100;
+
             setTimeout(sendNext, 2);
         } else {
-            ws.send("$OTA_END");
+            client.publish(selectedDevice + "/ota/end", "");
         }
     }
 
     sendNext();
 }
 
-// Gestione messaggi OTA
-ws.onmessage = function(event) {
-    const msg = event.data;
+// ⭐ Gestione messaggi OTA MQTT
+client.on("message", (topic, payload) => {
 
-    if (msg.startsWith("OTA_READY")) {
+    if (!topic.endsWith("/ota/status")) return;
+
+    const msg = payload.toString();
+
+    if (msg === "OTA_READY") {
         document.getElementById("otaStatus").innerText = "Pronto…";
     }
 
-    if (msg.startsWith("OTA_COMPLETE")) {
+    if (msg === "OTA_START") {
+        document.getElementById("otaStatus").innerText = "Programmazione in corso…";
+    }
+
+    if (msg === "OTA_COMPLETE") {
         document.getElementById("otaStatus").innerText = "Completato!";
     }
 
     if (msg.startsWith("OTA_ERROR")) {
         document.getElementById("otaStatus").innerText = "Errore: " + msg;
     }
-};
+});
 
 // ===============================
 // EXPORT
