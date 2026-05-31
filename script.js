@@ -347,28 +347,56 @@ document.getElementById("btnStartOTA").addEventListener("click", () => {
 // ⭐ Funzione OTA MQTT
 function startOTA_MQTT(lines) {
 
-    client.publish("wifi_terminal/" + selectedDevice + "/ota/begin", "");
+    console.log("=== OTA REMOTO AVVIATO ===");
+    console.log("selectedDevice =", selectedDevice);
+
+    // 1) BEGIN
+    client.publish(
+        "wifi_terminal/" + selectedDevice + "/ota/begin",
+        "",
+        { qos: 1, retain: false }
+    );
 
     let index = 0;
     const total = lines.length;
+    const chunkSize = 8;   // ⭐ inviamo 8 righe alla volta
 
     function sendNext() {
         if (index < total) {
 
-            const line = lines[index];
-            client.publish("wifi_terminal/" + selectedDevice + "/ota/chunk", line);
+            // ⭐ blocco di 8 righe
+            const block = lines.slice(index, index + chunkSize).join("\n");
 
-            index++;
-            document.getElementById("otaProgress").value = (index / total) * 100;
+            client.publish(
+                "wifi_terminal/" + selectedDevice + "/ota/chunk",
+                block,
+                { qos: 1, retain: false }
+            );
 
-            setTimeout(sendNext, 2);
+            index += chunkSize;
+
+            document.getElementById("otaProgress").value =
+                Math.min(100, (index / total) * 100);
+
+            // ⭐ delay sicuro per HiveMQ Cloud
+            setTimeout(sendNext, 30);
+
         } else {
-            client.publish("wifi_terminal/" + selectedDevice + "/ota/end", "");
+
+            // 3) END
+            client.publish(
+                "wifi_terminal/" + selectedDevice + "/ota/end",
+                "",
+                { qos: 1, retain: false }
+            );
+
+            console.log("=== OTA REMOTO COMPLETATO (UI) ===");
         }
     }
 
     sendNext();
 }
+
 
 
 // ===============================
