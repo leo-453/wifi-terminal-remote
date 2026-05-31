@@ -191,7 +191,7 @@ function aggiornaListaDispositivi() {
 function selezionaDispositivo() {
     const sel = document.getElementById("deviceList");
     deviceID = sel.value;
-
+  window.selectedDevice = deviceID;   // ⭐ AGGIUNGERE QUI
     if (!deviceID) {
         console.warn("Nessun deviceID selezionato");
         document.getElementById("selectedDevice").innerText = "nessuno";
