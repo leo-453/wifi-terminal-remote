@@ -328,10 +328,11 @@ document.getElementById("btnStartOTA").addEventListener("click", () => {
         return;
     }
 
-    if (!window.client || !client.connected) {
-        alert("MQTT non connesso");
-        return;
-    }
+   if (!mqttReady) {
+    alert("MQTT non connesso");
+    return;
+}
+
 
     const reader = new FileReader();
 
