@@ -167,6 +167,26 @@ document.getElementById("plotterToggle").onclick = () => {
 };
 
 
+
+window.addEventListener("load", () => {
+    const saved = localStorage.getItem("mqttConfig");
+    if (saved) {
+        const cfg = JSON.parse(saved);
+
+        window.mqttBroker = cfg.broker;
+        window.mqttPort   = cfg.port;
+        window.mqttUser   = cfg.user;
+        window.mqttPass   = cfg.pass;
+        window.topicBase  = "wifi_terminal/";
+
+        setStatus("parametri caricati");
+        mqttConnect();
+    } else {
+        setStatus("parametri non importati");
+    }
+});
+
+
 document.getElementById("btnImportMqtt").onclick = () => {
     document.getElementById("mqttFileInput").click();
 };
@@ -189,8 +209,10 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
             window.mqttPass   = cfg.pass;
             window.topicBase  = "wifi_terminal/";
 
+          // ⭐ Salvataggio persistente
+        localStorage.setItem("mqttConfig", JSON.stringify(cfg));
             // Aggiorna UI
-            document.getElementById("status").innerText = "parametri importati";
+           // document.getElementById("status").innerText = "parametri importati";
 
             // Avvia connessione MQTT
             mqttConnect();
