@@ -166,6 +166,43 @@ document.getElementById("plotterToggle").onclick = () => {
   }
 };
 
+
+document.getElementById("btnImportMqtt").onclick = () => {
+    document.getElementById("mqttFileInput").click();
+};
+
+
+document.getElementById("mqttFileInput").onchange = function(evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const cfg = JSON.parse(e.target.result);
+
+            // Parametri estratti dal file
+            window.mqttBroker = cfg.broker;
+            window.mqttPort   = cfg.port;
+            window.mqttUser   = cfg.user;
+            window.mqttPass   = cfg.pass;
+            window.topicBase  = "wifi_terminal/";
+
+            // Aggiorna UI
+            document.getElementById("status").innerText = "parametri importati";
+
+            // Avvia connessione MQTT
+            mqttConnect();
+
+        } catch (err) {
+            alert("File non valido");
+        }
+    };
+
+    reader.readAsText(file);
+};
+
 // ===============================
 // HANDLE PLOTTER DATA
 // ===============================
