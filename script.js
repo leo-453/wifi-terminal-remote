@@ -217,8 +217,11 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
     // ⭐ CHIUSURA EVENTUALE CONNESSIONE PRECEDENTE
         if (client) client.end(true);
           // setStatus("parametri importati");
-          badge.textContent = "MQTT PARAM caricati";
-        badge.className = "badge badge-green";
+
+          const badge = document.getElementById("mqttBadge");
+badge.textContent = "MQTT PARAM importati";
+badge.className = "badge badge-green";
+
             // Avvia connessione MQTT
             mqttConnect();
 
