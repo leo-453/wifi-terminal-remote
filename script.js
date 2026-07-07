@@ -212,8 +212,10 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
           // ⭐ Salvataggio persistente
         localStorage.setItem("mqttConfig", JSON.stringify(cfg));
             // Aggiorna UI
-           // document.getElementById("status").innerText = "parametri importati";
-
+         
+    // ⭐ CHIUSURA EVENTUALE CONNESSIONE PRECEDENTE
+        if (client) client.end(true);
+           setStatus("parametri importati");
             // Avvia connessione MQTT
             mqttConnect();
 
