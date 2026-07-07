@@ -233,6 +233,23 @@ button:hover {
     display: inline-flex;
 }
 
+
+.badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 10px;
+    color: white;
+}
+
+.badge-green {
+    background: #2a6;
+}
+
+.badge-red {
+    background: #c33;
+}
+
 /* =========================================================
    RESPONSIVE
    ========================================================= */
