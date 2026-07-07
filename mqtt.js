@@ -41,15 +41,20 @@ function setStatus(txt) {
 }
 
 
+//===
 // ---------------------------------------------------------
-// CONNESSIONE AL BROKER MQTT
+// CONNESSIONE AL BROKER MQTT (UI REMOTA)
 // ---------------------------------------------------------
 function connectMQTT() {
+
     console.log("Connessione al broker MQTT...");
 
-    client = mqtt.connect(`wss://${broker}:${port}/mqtt`, {
-        username: mqtt_user,
-        password: mqtt_pass,
+    // 🔧 Usa i parametri importati dal file JSON
+    const url = `wss://${mqttBroker}:${mqttPort}/mqtt`;
+
+    client = mqtt.connect(url, {
+        username: mqttUser,
+        password: mqttPass,
         reconnectPeriod: 2000,
         connectTimeout: 5000,
         keepalive: 30,
@@ -67,7 +72,7 @@ function connectMQTT() {
         console.log("MQTT connesso");
         setStatus("connesso");
 
-        // Annuncio presenza remota (non usato dall’ESP, ma innocuo)
+        // Annuncio presenza remota
         client.publish(
             `wifi_terminal/${remoteClientID}/status`,
             "REMOTE_CONNECTED",
@@ -106,6 +111,7 @@ function connectMQTT() {
 }
 
 
+//===
 // ---------------------------------------------------------
 // GESTIONE MESSAGGI IN ARRIVO
 // ---------------------------------------------------------
