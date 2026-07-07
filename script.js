@@ -209,13 +209,16 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
             window.mqttPass   = cfg.pass;
             window.topicBase  = "wifi_terminal/";
 
+          
           // ⭐ Salvataggio persistente
         localStorage.setItem("mqttConfig", JSON.stringify(cfg));
             // Aggiorna UI
          
     // ⭐ CHIUSURA EVENTUALE CONNESSIONE PRECEDENTE
         if (client) client.end(true);
-           setStatus("parametri importati");
+          // setStatus("parametri importati");
+          badge.textContent = "MQTT PARAM caricati";
+        badge.className = "badge badge-green";
             // Avvia connessione MQTT
             mqttConnect();
 
