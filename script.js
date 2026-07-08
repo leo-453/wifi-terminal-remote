@@ -166,10 +166,16 @@ document.getElementById("plotterToggle").onclick = () => {
   }
 };
 
+//====================================================================
 
-
+// ===============================
+// AUTO-IMPORT PARAMETRI MQTT ALL'AVVIO
+// ===============================
 window.addEventListener("load", () => {
+
     const saved = localStorage.getItem("mqttConfig");
+    const dot = document.getElementById("mqttDot");
+
     if (saved) {
         const cfg = JSON.parse(saved);
 
@@ -179,20 +185,27 @@ window.addEventListener("load", () => {
         window.mqttPass   = cfg.pass;
         window.topicBase  = "wifi_terminal/";
 
+        dot.className = "dot dot-green";
         setStatus("parametri caricati");
+
         mqttConnect();
+
     } else {
+        dot.className = "dot dot-red";
         setStatus("parametri non importati");
     }
 });
 
 
+// ===============================
+// IMPORT MANUALE PARAMETRI MQTT
+// ===============================
 document.getElementById("btnImportMqtt").onclick = () => {
     document.getElementById("mqttFileInput").click();
 };
 
-
 document.getElementById("mqttFileInput").onchange = function(evt) {
+
     const file = evt.target.files[0];
     if (!file) return;
 
@@ -209,20 +222,17 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
             window.mqttPass   = cfg.pass;
             window.topicBase  = "wifi_terminal/";
 
-          
-          // ⭐ Salvataggio persistente
-        localStorage.setItem("mqttConfig", JSON.stringify(cfg));
-            // Aggiorna UI
-         
-    // ⭐ CHIUSURA EVENTUALE CONNESSIONE PRECEDENTE
-        if (client) client.end(true);
-          // setStatus("parametri importati");
+            // Salvataggio persistente
+            localStorage.setItem("mqttConfig", JSON.stringify(cfg));
 
-          const badge = document.getElementById("mqttBadge");
-badge.textContent = "MQTT PARAM importati";
-badge.className = "badge badge-green";
+            // Aggiorna badge minimalista
+            const dot = document.getElementById("mqttDot");
+            dot.className = "dot dot-green";
 
-            // Avvia connessione MQTT
+            // Chiudi eventuale connessione precedente
+            if (window.client) window.client.end(true);
+
+            // Avvia nuova connessione MQTT
             mqttConnect();
 
         } catch (err) {
@@ -232,6 +242,13 @@ badge.className = "badge badge-green";
 
     reader.readAsText(file);
 };
+
+
+
+//==================================================================
+
+
+
 
 // ===============================
 // HANDLE PLOTTER DATA
