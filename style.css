@@ -55,6 +55,21 @@ h3 {
     margin: 0;
     padding: 0;
 }
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-left: 10px;
+    border-radius: 50%;
+}
+
+.dot-green {
+    background: #2a6;
+}
+
+.dot-red {
+    background: #c33;
+}
 
 /* =========================================================
    STATO BROKER
