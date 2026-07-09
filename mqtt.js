@@ -1,14 +1,22 @@
-// ---------------------------------------------------------
-// CONFIGURAZIONE BROKER MQTT (WebSocket)
-// ---------------------------------------------------------
-const broker = "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud";
-const port = 8884;
-const useTLS = true;
 
-const mqtt_user = "leo453";
-const mqtt_pass = "bsfg805NG";
 
-const announce_topic = "wifi_terminal/announce";
+
+
+// ---------------------------------------------------------
+// CONFIGURAZIONE BROKER MQTT (WebSocket) - DEFAULT
+// ---------------------------------------------------------
+const DEFAULT_MQTT = {
+    broker: "e46684488ad3440aa9f0b18d79db6b87.s1.eu.hivemq.cloud",
+    port: 8884,
+    user: "leo453",
+    pass: "bsfg805NG"
+};
+
+// Parametri MQTT impostati dalla UI remota
+let mqttBroker = null;
+let mqttPort   = null;
+let mqttUser   = null;
+let mqttPass   = null;
 
 let client = null;
 let mqttReady = false;
@@ -18,25 +26,16 @@ let deviceName = null;
 
 let topic_pub = null;   // ESP → UI
 let topic_sub = null;   // UI → ESP
-
 let old_topic_pub = null;
-let discoveredDevices = [];
-
-// Parametri MQTT impostati dalla UI remota
-let mqttBroker = null;
-let mqttPort   = null;
-let mqttUser   = null;
-let mqttPass   = null;
 
 // ---------------------------------------------------------
-// CLIENT ID REMOTO (persistente, ma NON usato nei messaggi)
+// CLIENT ID REMOTO
 // ---------------------------------------------------------
 let remoteClientID = localStorage.getItem("remoteClientID");
 if (!remoteClientID) {
     remoteClientID = "REMOTE_" + Math.random().toString(36).substring(2, 10).toUpperCase();
     localStorage.setItem("remoteClientID", remoteClientID);
 }
-
 
 // ---------------------------------------------------------
 // STATO UI
@@ -45,14 +44,12 @@ function setStatus(txt) {
     document.getElementById("status").innerText = txt;
 }
 
-
-//===
 // ---------------------------------------------------------
 // CONNESSIONE AL BROKER MQTT (UI REMOTA)
 // ---------------------------------------------------------
 function connectMQTT() {
 
- if (!mqttBroker || !mqttPort) {
+    if (!mqttBroker || !mqttPort) {
         console.error("Parametri MQTT mancanti");
         setStatus("parametri mancanti");
         return;
@@ -77,27 +74,20 @@ function connectMQTT() {
         }
     });
 
-
-
-  
-
     client.on('connect', () => {
         mqttReady = true;
         console.log("MQTT connesso");
         setStatus("connesso");
 
-        // Annuncio presenza remota
         client.publish(
             `wifi_terminal/${remoteClientID}/status`,
             "REMOTE_CONNECTED",
             { qos: 1, retain: false }
         );
 
-        // Sottoscrizione agli annunci dei dispositivi
-        client.subscribe(announce_topic);
-        console.log("Sottoscritto a:", announce_topic);
+        client.subscribe("wifi_terminal/announce");
+        console.log("Sottoscritto a: wifi_terminal/announce");
 
-        // Se un device era già selezionato → risottoscrivi
         if (topic_pub) {
             client.subscribe(topic_pub);
             old_topic_pub = topic_pub;
@@ -123,6 +113,13 @@ function connectMQTT() {
         onMessageArrived(topic, payload.toString());
     });
 }
+
+
+
+
+
+
+//===============================================================================
 
 
 //===
