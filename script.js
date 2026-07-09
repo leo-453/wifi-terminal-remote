@@ -188,7 +188,8 @@ window.addEventListener("load", () => {
         dot.className = "dot dot-green";
         setStatus("parametri caricati");
 
-        mqttConnect();
+        //mqttConnect();
+      connectMQTT();
 
     } else {
         dot.className = "dot dot-red";
