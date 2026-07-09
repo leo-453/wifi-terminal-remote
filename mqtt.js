@@ -52,8 +52,6 @@ function setStatus(txt) {
 // ---------------------------------------------------------
 function connectMQTT() {
 
-
-
  if (!mqttBroker || !mqttPort) {
         console.error("Parametri MQTT mancanti");
         setStatus("parametri mancanti");
