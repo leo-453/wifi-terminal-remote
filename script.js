@@ -176,36 +176,28 @@ window.addEventListener("load", () => {
     const saved = localStorage.getItem("mqttConfig");
     const dot = document.getElementById("mqttDot");
 
-    if (saved) {
-        const cfg = JSON.parse(saved);
+    let cfg;
+  
+  if (saved) {
+        cfg = JSON.parse(saved);
+        dot.className = "dot dot-green";
+        setStatus("parametri caricati");
+        console.log("Parametri MQTT caricati da localStorage");
+    } else {
+        cfg = DEFAULT_MQTT;
+        dot.className = "dot dot-yellow";
+        setStatus("parametri di default");
+        console.log("Uso parametri MQTT di default");
+    }
 
         // Imposta parametri globali usati da mqtt.js
         window.mqttBroker = cfg.broker;
         window.mqttPort   = cfg.port;
         window.mqttUser   = cfg.user;
         window.mqttPass   = cfg.pass;
-        window.topicBase  = "wifi_terminal/";
-
-        dot.className = "dot dot-green";
-        setStatus("parametri caricati");
-
-        // NON chiamare subito mqttConnect()
-        // mqtt.js potrebbe non aver ancora definito la funzione
-
+     
         // Avvio sicuro della connessione MQTT
-        setTimeout(() => {
-            if (window.mqttBroker && window.mqttPort) {
-                console.log("Avvio connessione MQTT (post-load)...");
-                connectMQTT();   // ✔ ora è sicuro
-            } else {
-                console.warn("Parametri MQTT non validi dopo il load");
-            }
-        }, 50);
-
-    } else {
-        dot.className = "dot dot-red";
-        setStatus("parametri non importati");
-    }
+        setTimeout(() => connectMQTT(), 50);
 });
 
 // ===============================
@@ -234,9 +226,7 @@ function importMQTTparams(evt) {
             setStatus("parametri importati");
 
             // Avvia connessione MQTT
-            setTimeout(() => {
-                mqttConnect();
-            }, 50);
+            setTimeout(() => connectMQTT(), 50);
 
         } catch (err) {
             console.error("Errore import:", err);
@@ -247,54 +237,8 @@ function importMQTTparams(evt) {
     reader.readAsText(file);
 }
 
+window.importMQTTparams = importMQTTparams;
 
-// ===============================
-// IMPORT MANUALE PARAMETRI MQTT
-// ===============================
-document.getElementById("btnImportMqtt").onclick = () => {
-    document.getElementById("mqttFileInput").click();
-};
-
-document.getElementById("mqttFileInput").onchange = function(evt) {
-
-    const file = evt.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-      console.log("RAW:", e.target.result);
-
-        try {
-            const cfg = JSON.parse(e.target.result);
-
-            // Parametri estratti dal file
-            window.mqttBroker = cfg.broker;
-            window.mqttPort   = cfg.port;
-            window.mqttUser   = cfg.user;
-            window.mqttPass   = cfg.pass;
-            window.topicBase  = "wifi_terminal/";
-
-            // Salvataggio persistente
-            localStorage.setItem("mqttConfig", JSON.stringify(cfg));
-
-            // Aggiorna badge minimalista
-            const dot = document.getElementById("mqttDot");
-            dot.className = "dot dot-green";
-
-            // Chiudi eventuale connessione precedente
-            if (window.client) window.client.end(true);
-
-            // Avvia nuova connessione MQTT
-            mqttConnect();
-
-        } catch (err) {
-            alert("File non valido");
-        }
-    };
-
-    reader.readAsText(file);
-};
 
 // ===============================
 // EVENTI UI
@@ -309,9 +253,7 @@ window.addEventListener("load", () => {
     });
 });
 
-window.importMQTTparams = importMQTTparams;
 
-//==================================================================
 
 
 
