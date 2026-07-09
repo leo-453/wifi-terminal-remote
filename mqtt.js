@@ -22,6 +22,11 @@ let topic_sub = null;   // UI → ESP
 let old_topic_pub = null;
 let discoveredDevices = [];
 
+// Parametri MQTT impostati dalla UI remota
+let mqttBroker = null;
+let mqttPort   = null;
+let mqttUser   = null;
+let mqttPass   = null;
 
 // ---------------------------------------------------------
 // CLIENT ID REMOTO (persistente, ma NON usato nei messaggi)
@@ -47,9 +52,16 @@ function setStatus(txt) {
 // ---------------------------------------------------------
 function connectMQTT() {
 
+
+
+ if (!mqttBroker || !mqttPort) {
+        console.error("Parametri MQTT mancanti");
+        setStatus("parametri mancanti");
+        return;
+    }
+
     console.log("Connessione al broker MQTT...");
 
-    // 🔧 Usa i parametri importati dal file JSON
     const url = `wss://${mqttBroker}:${mqttPort}/mqtt`;
 
     client = mqtt.connect(url, {
@@ -66,6 +78,10 @@ function connectMQTT() {
             retain: false
         }
     });
+
+
+
+  
 
     client.on('connect', () => {
         mqttReady = true;
