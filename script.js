@@ -173,7 +173,6 @@ document.getElementById("plotterToggle").onclick = () => {
 // ===============================
 window.addEventListener("load", () => {
 
-    // --- AUTO IMPORT ---
     const saved = localStorage.getItem("mqttConfig");
     const dot = document.getElementById("mqttDot");
 
@@ -204,8 +203,8 @@ window.addEventListener("load", () => {
     // ===============================
     // AGGANCIO EVENTO IMPORT PARAM
     // ===============================
-    const importBtn = document.getElementById("importBtn");
-    const importFile = document.getElementById("importFile");
+    const importBtn  = document.getElementById("btnImportMqtt");
+    const importFile = document.getElementById("mqttFileInput");
 
     if (importBtn && importFile) {
         importBtn.addEventListener("click", () => {
@@ -274,6 +273,8 @@ window.importMQTTparams = importMQTTparams;
 
 
 //====================================================================
+
+
 // ===============================
 // EVENTI UI
 // ===============================
