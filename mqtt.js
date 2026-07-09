@@ -266,7 +266,7 @@ setInterval(() => {
 // ---------------------------------------------------------
 window.addEventListener("load", () => {
 
-    connectMQTT();
+   // connectMQTT();
 
     const input = document.getElementById("msg");
     input.addEventListener("keydown", (ev) => {
