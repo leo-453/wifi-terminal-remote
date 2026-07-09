@@ -173,6 +173,7 @@ document.getElementById("plotterToggle").onclick = () => {
 // ===============================
 window.addEventListener("load", () => {
 
+    // --- AUTO IMPORT ---
     const saved = localStorage.getItem("mqttConfig");
     const dot = document.getElementById("mqttDot");
 
@@ -198,6 +199,37 @@ window.addEventListener("load", () => {
 
     // Avvio sicuro della connessione MQTT
     setTimeout(() => connectMQTT(), 50);
+
+
+    // ===============================
+    // AGGANCIO EVENTO IMPORT PARAM
+    // ===============================
+    const importBtn = document.getElementById("importBtn");
+    const importFile = document.getElementById("importFile");
+
+    if (importBtn && importFile) {
+        importBtn.addEventListener("click", () => {
+            importFile.click();   // apre la finestra di selezione file
+        });
+
+        importFile.addEventListener("change", importMQTTparams);
+    } else {
+        console.error("IMPORT PARAM: elementi HTML non trovati");
+    }
+
+
+    // ===============================
+    // EVENTI UI (invio messaggi)
+    // ===============================
+    const input = document.getElementById("msg");
+    if (input) {
+        input.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+                ev.preventDefault();
+                publishMessage();
+            }
+        });
+    }
 });
 
 
@@ -241,6 +273,7 @@ function importMQTTparams(evt) {
 window.importMQTTparams = importMQTTparams;
 
 
+//====================================================================
 // ===============================
 // EVENTI UI
 // ===============================
@@ -256,7 +289,7 @@ window.addEventListener("load", () => {
 
 
 
-
+//=========================================================================
 
 
 
