@@ -208,6 +208,45 @@ window.addEventListener("load", () => {
     }
 });
 
+// ===============================
+// IMPORT MANUALE PARAMETRI MQTT
+// ===============================
+function importMQTTparams(evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        try {
+            const cfg = JSON.parse(e.target.result);
+
+            // Salva su localStorage
+            localStorage.setItem("mqttConfig", JSON.stringify(cfg));
+
+            // Aggiorna variabili globali
+            window.mqttBroker = cfg.broker;
+            window.mqttPort   = cfg.port;
+            window.mqttUser   = cfg.user;
+            window.mqttPass   = cfg.pass;
+
+            document.getElementById("mqttDot").className = "dot dot-green";
+            setStatus("parametri importati");
+
+            // Avvia connessione MQTT
+            setTimeout(() => {
+                mqttConnect();
+            }, 50);
+
+        } catch (err) {
+            console.error("Errore import:", err);
+            alert("File non valido");
+        }
+    };
+
+    reader.readAsText(file);
+}
+
 
 // ===============================
 // IMPORT MANUALE PARAMETRI MQTT
@@ -257,7 +296,20 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
     reader.readAsText(file);
 };
 
+// ===============================
+// EVENTI UI
+// ===============================
+window.addEventListener("load", () => {
+    const input = document.getElementById("msg");
+    input.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") {
+            ev.preventDefault();
+            publishMessage();
+        }
+    });
+});
 
+window.importMQTTparams = importMQTTparams;
 
 //==================================================================
 
