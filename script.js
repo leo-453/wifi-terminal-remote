@@ -179,6 +179,7 @@ window.addEventListener("load", () => {
     if (saved) {
         const cfg = JSON.parse(saved);
 
+        // Imposta parametri globali usati da mqtt.js
         window.mqttBroker = cfg.broker;
         window.mqttPort   = cfg.port;
         window.mqttUser   = cfg.user;
@@ -188,8 +189,18 @@ window.addEventListener("load", () => {
         dot.className = "dot dot-green";
         setStatus("parametri caricati");
 
-        //mqttConnect();
-      connectMQTT();
+        // NON chiamare subito mqttConnect()
+        // mqtt.js potrebbe non aver ancora definito la funzione
+
+        // Avvio sicuro della connessione MQTT
+        setTimeout(() => {
+            if (window.mqttBroker && window.mqttPort) {
+                console.log("Avvio connessione MQTT (post-load)...");
+                connectMQTT();   // ✔ ora è sicuro
+            } else {
+                console.warn("Parametri MQTT non validi dopo il load");
+            }
+        }, 50);
 
     } else {
         dot.className = "dot dot-red";
