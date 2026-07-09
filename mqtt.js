@@ -295,17 +295,6 @@ window.addEventListener("beforeunload", () => {
     }
 });
 
-window.addEventListener("load", () => {
-    const saved = localStorage.getItem("mqttConfig");
-    if (saved) {
-        const cfg = JSON.parse(saved);
-        window.mqttBroker = cfg.broker;
-        window.mqttPort   = cfg.port;
-        window.mqttUser   = cfg.user;
-        window.mqttPass   = cfg.pass;
-        connectMQTT();
-    }
-});
 
 window.selezionaDispositivo = selezionaDispositivo;
 window.publishMessage = publishMessage;
