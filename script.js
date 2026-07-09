@@ -177,8 +177,8 @@ window.addEventListener("load", () => {
     const dot = document.getElementById("mqttDot");
 
     let cfg;
-  
-  if (saved) {
+
+    if (saved) {
         cfg = JSON.parse(saved);
         dot.className = "dot dot-green";
         setStatus("parametri caricati");
@@ -190,15 +190,16 @@ window.addEventListener("load", () => {
         console.log("Uso parametri MQTT di default");
     }
 
-        // Imposta parametri globali usati da mqtt.js
-        window.mqttBroker = cfg.broker;
-        window.mqttPort   = cfg.port;
-        window.mqttUser   = cfg.user;
-        window.mqttPass   = cfg.pass;
-     
-        // Avvio sicuro della connessione MQTT
-        setTimeout(() => connectMQTT(), 50);
+    // Imposta parametri globali usati da mqtt.js
+    window.mqttBroker = cfg.broker;
+    window.mqttPort   = cfg.port;
+    window.mqttUser   = cfg.user;
+    window.mqttPass   = cfg.pass;
+
+    // Avvio sicuro della connessione MQTT
+    setTimeout(() => connectMQTT(), 50);
 });
+
 
 // ===============================
 // IMPORT MANUALE PARAMETRI MQTT
@@ -252,6 +253,7 @@ window.addEventListener("load", () => {
         }
     });
 });
+
 
 
 
