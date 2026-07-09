@@ -274,18 +274,7 @@ setInterval(() => {
 }, 10000);   // ogni 10 secondi
 
 
-// ---------------------------------------------------------
-// AVVIO AUTOMATICO
-// ---------------------------------------------------------
-window.addEventListener("load", () => {
-    const input = document.getElementById("msg");
-    input.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter") {
-            ev.preventDefault();
-            publishMessage();
-        }
-    });
-});
+
 
 window.addEventListener("beforeunload", () => {
     if (mqttReady) {
