@@ -47,6 +47,8 @@ function setStatus(txt) {
 // ---------------------------------------------------------
 // CONNESSIONE AL BROKER MQTT (UI REMOTA)
 // ---------------------------------------------------------
+
+
 function connectMQTT() {
 
     if (!mqttBroker || !mqttPort) {
