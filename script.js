@@ -190,10 +190,10 @@ window.addEventListener("load", () => {
     }
 
     // Imposta parametri globali usati da mqtt.js
-    window.mqttBroker = cfg.broker;
-    window.mqttPort   = cfg.port;
-    window.mqttUser   = cfg.user;
-    window.mqttPass   = cfg.pass;
+    mqttBroker = cfg.broker;
+    mqttPort   = cfg.port;
+    mqttUser   = cfg.user;
+    mqttPass   = cfg.pass;
 
     // Avvio sicuro della connessione MQTT
     setTimeout(() => connectMQTT(), 50);
