@@ -212,6 +212,8 @@ document.getElementById("mqttFileInput").onchange = function(evt) {
     const reader = new FileReader();
 
     reader.onload = function(e) {
+      console.log("RAW:", e.target.result);
+
         try {
             const cfg = JSON.parse(e.target.result);
 
