@@ -7,10 +7,9 @@
 
     <link rel="stylesheet" href="style.css">
 
-   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js" defer></script>
-<script src="mqtt2.js" defer></script>
-<script src="script.js" defer></script>
-
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js" defer></script>
+    <script src="mqtt2.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -18,13 +17,11 @@
 <div id="main">
     <h2>WiFi Terminal – MQTT Client</h2>
 
-    <!-- ⭐ Barra stato minimalista -->
     <div class="status-bar">
         Stato Broker: <span id="status">disconnesso</span>
         <span id="mqttDot" class="dot dot-red"></span>
     </div>
 
-    <!-- DISPOSITIVI -->
     <div class="section">
         <h3>Dispositivi rilevati</h3>
         <select id="deviceList" onchange="selezionaDispositivo()">
@@ -33,7 +30,6 @@
         <p>Target: <span id="selectedDevice">nessuno</span></p>
     </div>
 
-    <!-- TRASMISSIONE E COMANDI -->
     <div class="section">
         <h3>📤 Trasmissione e Comandi</h3>
         <input id="msg" type="text" placeholder="Scrivi un messaggio...">
@@ -42,17 +38,9 @@
             <button onclick="publishMessage()">SEND</button>
             <button onclick="document.getElementById('msg').value=''">CLEAR</button>
             <button id="plotterToggle">PLOTTER</button>
-            <button id="btnUpload">UPLOAD</button>
-
-            <!-- ⭐ Nuovo pulsante IMPORT PARAM -->
-            <button id="btnImportMqtt">IMPORT PARAM</button>
         </div>
-
-        <!-- ⭐ Input file nascosto -->
-        <input type="file" id="mqttFileInput" accept=".json" style="display:none;">
     </div>
 
-    <!-- RICEZIONE -->
     <div class="section ricezione" style="background:#f8f9fa;">
         <h3>📥 Ricezione</h3>
         <div class="rx-controls">
@@ -61,10 +49,8 @@
 
         <div id="messageLog"></div>
     </div>
-
 </div>
 
-<!-- PLOTTER -->
 <div id="plotterPanel" style="display:none;">
     <div id="plotterDragBar"></div>
 
@@ -87,24 +73,6 @@
 
             <button id="plotterRecord">REC</button>
         </div>
-    </div>
-</div>
-
-<!-- POPUP OTA -->
-<div id="otaPopup" class="modal" style="display:none;">
-    <div class="modal-content">
-
-        <h3>Programmazione OTA</h3>
-
-        <input type="file" id="hexFileInput" accept=".hex">
-        <button id="btnStartOTA">Programma</button>
-
-        <progress id="otaProgress" max="100" value="0" style="width:100%; margin-top:10px;"></progress>
-
-        <div id="otaStatus" style="margin-top:8px; font-size:14px;"></div>
-
-        <button id="btnCloseOTA" style="margin-top:15px;">Chiudi</button>
-
     </div>
 </div>
 
