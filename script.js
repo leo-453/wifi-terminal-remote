@@ -275,7 +275,7 @@ window.addEventListener("load", () => {
             }
         });
     }
-});
+
 
 
 // ===============================
@@ -326,21 +326,7 @@ document.getElementById("mqttSaveBtn").onclick = () => {
 
 
 
-    // ===============================
-    // EVENTI UI (invio messaggi)
-    // ===============================
-    const input = document.getElementById("msg");
-    if (input) {
-        input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter") {
-                ev.preventDefault();
-                publishMessage();
-            }
-        });
-    }
-});
-
-
+   
 
 
 
