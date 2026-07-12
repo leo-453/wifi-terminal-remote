@@ -199,20 +199,67 @@ window.addEventListener("load", () => {
     setTimeout(() => connectMQTT(), 50);
 
 
-    // ===============================
-    // AGGANCIO EVENTO IMPORT PARAM
-    // ===============================
-    const importBtn  = document.getElementById("btnImportMqtt");
-    const importFile = document.getElementById("mqttFileInput");
+// ===============================
+// AUTO-IMPORT PARAMETRI MQTT ALL'AVVIO
+// ===============================
+window.addEventListener("load", () => {
 
-    if (importBtn && importFile) {
-        importBtn.addEventListener("click", () => {
-            importFile.click();   // apre la finestra di selezione file
+    // Recupera eventuali parametri salvati in localStorage
+    const saved = localStorage.getItem("mqttConfig");
+    const dot = document.getElementById("mqttDot");
+
+    let cfg;
+
+    if (saved) {
+        // Se esistono parametri salvati → usali
+        cfg = JSON.parse(saved);
+        dot.className = "dot dot-green";
+        setStatus("parametri caricati");
+        console.log("Parametri MQTT caricati da localStorage");
+    } else {
+        // Altrimenti usa i parametri di default
+        cfg = DEFAULT_MQTT;
+        dot.className = "dot dot-yellow";
+        setStatus("parametri di default");
+        console.log("Uso parametri MQTT di default");
+    }
+
+    // Imposta parametri globali usati da mqtt.js
+    mqttBroker = cfg.broker;
+    mqttPort   = cfg.port;
+    mqttUser   = cfg.user;
+    mqttPass   = cfg.pass;
+
+    // Avvio sicuro della connessione MQTT
+    setTimeout(() => connectMQTT(), 50);
+
+
+    // ===============================
+    // NUOVO EVENTO: APERTURA PANNELLO PARAMETRI MQTT
+    // ===============================
+
+    // Pulsante che apre il pannello
+    const mqttBtn = document.getElementById("btnMqttParam");
+
+    // Il pannello modale
+    const mqttModal = document.getElementById("mqttModal");
+
+    if (mqttBtn && mqttModal) {
+
+        mqttBtn.addEventListener("click", () => {
+
+            // Precarica i valori attuali nel pannello
+            document.getElementById("mqttBrokerInput").value = mqttBroker || "";
+            document.getElementById("mqttPortInput").value   = mqttPort   || "";
+            document.getElementById("mqttUserInput").value   = mqttUser   || "";
+            document.getElementById("mqttPassInput").value   = mqttPass   || "";
+
+            // Mostra il pannello
+            mqttModal.style.display = "flex";
         });
 
-        importFile.addEventListener("change", importMQTTparams);
     } else {
-        console.error("IMPORT PARAM: elementi HTML non trovati");
+        console.error("MQTT PARAM: elementi HTML non trovati");
     }
 
 
@@ -232,43 +279,69 @@ window.addEventListener("load", () => {
 
 
 // ===============================
-// IMPORT MANUALE PARAMETRI MQTT
+// CHIUSURA PANNELLO PARAMETRI MQTT
 // ===============================
-function importMQTTparams(evt) {
-    const file = evt.target.files[0];
-    if (!file) return;
+document.getElementById("mqttCloseBtn").onclick = () => {
+    document.getElementById("mqttModal").style.display = "none";
+};
 
-    const reader = new FileReader();
 
-    reader.onload = (e) => {
-        try {
-            const cfg = JSON.parse(e.target.result);
+// ===============================
+// SALVATAGGIO PARAMETRI MQTT
+// ===============================
+document.getElementById("mqttSaveBtn").onclick = () => {
 
-            // Salva su localStorage
-            localStorage.setItem("mqttConfig", JSON.stringify(cfg));
-
-            // Aggiorna variabili globali
-            window.mqttBroker = cfg.broker;
-            window.mqttPort   = cfg.port;
-            window.mqttUser   = cfg.user;
-            window.mqttPass   = cfg.pass;
-
-            document.getElementById("mqttDot").className = "dot dot-green";
-            setStatus("parametri importati");
-
-            // Avvia connessione MQTT
-            setTimeout(() => connectMQTT(), 50);
-
-        } catch (err) {
-            console.error("Errore import:", err);
-            alert("File non valido");
-        }
+    // Legge i valori dal pannello
+    const cfg = {
+        broker: document.getElementById("mqttBrokerInput").value.trim(),
+        port:   Number(document.getElementById("mqttPortInput").value),
+        user:   document.getElementById("mqttUserInput").value.trim(),
+        pass:   document.getElementById("mqttPassInput").value.trim()
     };
 
-    reader.readAsText(file);
-}
+    // Salva su localStorage
+    localStorage.setItem("mqttConfig", JSON.stringify(cfg));
 
-window.importMQTTparams = importMQTTparams;
+    // Aggiorna variabili globali
+    mqttBroker = cfg.broker;
+    mqttPort   = cfg.port;
+    mqttUser   = cfg.user;
+    mqttPass   = cfg.pass;
+
+    // Aggiorna badge
+    document.getElementById("mqttDot").className = "dot dot-green";
+    setStatus("parametri aggiornati");
+
+    // Chiudi pannello
+    document.getElementById("mqttModal").style.display = "none";
+
+    // Riconnessione sicura
+    if (window.client) {
+        try { client.end(true); } catch(e) {}
+    }
+
+    // Avvia nuova connessione MQTT
+    setTimeout(() => connectMQTT(), 100);
+};
+
+
+
+    // ===============================
+    // EVENTI UI (invio messaggi)
+    // ===============================
+    const input = document.getElementById("msg");
+    if (input) {
+        input.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+                ev.preventDefault();
+                publishMessage();
+            }
+        });
+    }
+});
+
+
+
 
 
 //====================================================================
