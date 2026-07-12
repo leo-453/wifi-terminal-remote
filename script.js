@@ -1,6 +1,5 @@
 console.log("MQTT JS loaded");
 
-
 // ===============================
 // PLOTTER REMOTO MQTT - VARIABILI
 // ===============================
@@ -66,33 +65,29 @@ window.addEventListener("load", () => {
   const fsInput = document.getElementById("plotterMaxInput");
   if (fsInput) fsInput.value = plotterMax;
 
-// Toggle FS
-document.getElementById("plotterFS").onclick = () => {
-    console.log("FS cliccato");
+  // Toggle FS
+  document.getElementById("plotterFS").onclick = () => {
     document.getElementById("plotterFSControl").classList.toggle("show");
-};
+  };
 
-
-  
-// SET FS
-document.getElementById("plotterSetMax").onclick = () => {
+  // SET FS
+  document.getElementById("plotterSetMax").onclick = () => {
     const v = Number(fsInput.value);
     if (v > 0) {
-        plotterMax = v;
-        localStorage.setItem("plotterMax", v);
-        plotterBuf = plotterBuf.map(() => []);
-        drawPlotter();
+      plotterMax = v;
+      localStorage.setItem("plotterMax", v);
+      plotterBuf = plotterBuf.map(() => []);
+      drawPlotter();
     }
     document.getElementById("plotterFSControl").classList.remove("show");
-};
+  };
 
-// ESC chiude FS
-document.addEventListener("keydown", (ev) => {
+  // ESC chiude FS
+  document.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") {
-        document.getElementById("plotterFSControl").classList.remove("show");
+      document.getElementById("plotterFSControl").classList.remove("show");
     }
-});
-
+  });
 
   // RECORD
   document.getElementById("plotterRecord").onclick = () => {
@@ -129,25 +124,18 @@ document.getElementById("plotterToggle").onclick = () => {
   const fsCtrl = document.getElementById("plotterFSControl");
   const recBtn = document.getElementById("plotterRecord");
 
-  // Se è chiuso → apri
   if (panel.style.display === "none" || panel.style.display === "") {
 
       panel.style.display = "block";
       btn.textContent = "Plotter_off";
-
-      // Chiudi pannello FS
       fsCtrl.classList.remove("show");
 
   } else {
 
-      // Se è aperto → chiudi
       panel.style.display = "none";
       btn.textContent = "Plotter";
-
-      // Chiudi pannello FS
       fsCtrl.classList.remove("show");
 
-      // Se stiamo registrando → stop + salva CSV
       if (plotterRecording) {
           plotterRecording = false;
           recBtn.style.background = "#333";
@@ -166,9 +154,8 @@ document.getElementById("plotterToggle").onclick = () => {
   }
 };
 
-//====================================================================
 // ===============================
-// AUTO-IMPORT PARAMETRI MQTT ALL'AVVIO
+// AUTO-IMPORT PARAMETRI MQTT + APERTURA PANNELLO
 // ===============================
 window.addEventListener("load", () => {
 
@@ -181,102 +168,35 @@ window.addEventListener("load", () => {
         cfg = JSON.parse(saved);
         dot.className = "dot dot-green";
         setStatus("parametri caricati");
-        console.log("Parametri MQTT caricati da localStorage");
     } else {
         cfg = DEFAULT_MQTT;
         dot.className = "dot dot-yellow";
         setStatus("parametri di default");
-        console.log("Uso parametri MQTT di default");
     }
 
-    // Imposta parametri globali usati da mqtt.js
     mqttBroker = cfg.broker;
     mqttPort   = cfg.port;
     mqttUser   = cfg.user;
     mqttPass   = cfg.pass;
 
-    // Avvio sicuro della connessione MQTT
     setTimeout(() => connectMQTT(), 50);
 
-
-// ===============================
-// AUTO-IMPORT PARAMETRI MQTT ALL'AVVIO
-// ===============================
-window.addEventListener("load", () => {
-
-    // Recupera eventuali parametri salvati in localStorage
-    const saved = localStorage.getItem("mqttConfig");
-    const dot = document.getElementById("mqttDot");
-
-    let cfg;
-
-    if (saved) {
-        // Se esistono parametri salvati → usali
-        cfg = JSON.parse(saved);
-        dot.className = "dot dot-green";
-        setStatus("parametri caricati");
-        console.log("Parametri MQTT caricati da localStorage");
-    } else {
-        // Altrimenti usa i parametri di default
-        cfg = DEFAULT_MQTT;
-        dot.className = "dot dot-yellow";
-        setStatus("parametri di default");
-        console.log("Uso parametri MQTT di default");
-    }
-
-    // Imposta parametri globali usati da mqtt.js
-    mqttBroker = cfg.broker;
-    mqttPort   = cfg.port;
-    mqttUser   = cfg.user;
-    mqttPass   = cfg.pass;
-
-    // Avvio sicuro della connessione MQTT
-    setTimeout(() => connectMQTT(), 50);
-
-
-    // ===============================
-    // NUOVO EVENTO: APERTURA PANNELLO PARAMETRI MQTT
-    // ===============================
-
-    // Pulsante che apre il pannello
-    const mqttBtn = document.getElementById("btnMqttParam");
-
-    // Il pannello modale
+    // Apertura pannello MQTT
+    const mqttBtn   = document.getElementById("btnMqttParam");
     const mqttModal = document.getElementById("mqttModal");
 
     if (mqttBtn && mqttModal) {
-
         mqttBtn.addEventListener("click", () => {
 
-            // Precarica i valori attuali nel pannello
             document.getElementById("mqttBrokerInput").value = mqttBroker || "";
             document.getElementById("mqttPortInput").value   = mqttPort   || "";
             document.getElementById("mqttUserInput").value   = mqttUser   || "";
             document.getElementById("mqttPassInput").value   = mqttPass   || "";
 
-            // Mostra il pannello
             mqttModal.style.display = "flex";
         });
-
-    } else {
-        console.error("MQTT PARAM: elementi HTML non trovati");
     }
-
-
-    // ===============================
-    // EVENTI UI (invio messaggi)
-    // ===============================
-    const input = document.getElementById("msg");
-    if (input) {
-        input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter") {
-                ev.preventDefault();
-                publishMessage();
-            }
-        });
-    }
-
-
+});
 
 // ===============================
 // CHIUSURA PANNELLO PARAMETRI MQTT
@@ -285,13 +205,11 @@ document.getElementById("mqttCloseBtn").onclick = () => {
     document.getElementById("mqttModal").style.display = "none";
 };
 
-
 // ===============================
 // SALVATAGGIO PARAMETRI MQTT
 // ===============================
 document.getElementById("mqttSaveBtn").onclick = () => {
 
-    // Legge i valori dal pannello
     const cfg = {
         broker: document.getElementById("mqttBrokerInput").value.trim(),
         port:   Number(document.getElementById("mqttPortInput").value),
@@ -299,58 +217,24 @@ document.getElementById("mqttSaveBtn").onclick = () => {
         pass:   document.getElementById("mqttPassInput").value.trim()
     };
 
-    // Salva su localStorage
     localStorage.setItem("mqttConfig", JSON.stringify(cfg));
 
-    // Aggiorna variabili globali
     mqttBroker = cfg.broker;
     mqttPort   = cfg.port;
     mqttUser   = cfg.user;
     mqttPass   = cfg.pass;
 
-    // Aggiorna badge
     document.getElementById("mqttDot").className = "dot dot-green";
     setStatus("parametri aggiornati");
 
-    // Chiudi pannello
     document.getElementById("mqttModal").style.display = "none";
 
-    // Riconnessione sicura
     if (window.client) {
         try { client.end(true); } catch(e) {}
     }
 
-    // Avvia nuova connessione MQTT
     setTimeout(() => connectMQTT(), 100);
 };
-
-
-
-   
-
-
-
-//====================================================================
-
-
-// ===============================
-// EVENTI UI
-// ===============================
-window.addEventListener("load", () => {
-    const input = document.getElementById("msg");
-    input.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter") {
-            ev.preventDefault();
-            publishMessage();
-        }
-    });
-});
-
-
-
-//=========================================================================
-
-
 
 // ===============================
 // HANDLE PLOTTER DATA
