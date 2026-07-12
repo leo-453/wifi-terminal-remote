@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi Terminal – MQTT Remoto</title>
+    <title>WiFi Terminal Remote</title>
 
     <link rel="stylesheet" href="style.css">
 
@@ -20,23 +20,28 @@
 
     <!-- ⭐ Barra stato minimalista -->
     <div class="status-bar">
-        Stato Broker: <span id="status">disconnesso</span>
+        Stato MQTT: <span id="status">disconnesso</span>
         <span id="mqttDot" class="dot dot-red"></span>
     </div>
 
     <!-- DISPOSITIVI -->
-    <div class="section">
-        <h3>Dispositivi rilevati</h3>
-        <select id="deviceList" onchange="selezionaDispositivo()">
-            <option value="">Scansionando rete MQTT...</option>
-        </select>
-        <p>Target: <span id="selectedDevice">nessuno</span></p>
-    </div>
+<div class="section">
+    <h3>Dispositivi</h3>
+
+    <!-- Versione ibrida: placeholder iniziale -->
+    <select id="deviceList">
+        <option value="">Scansionando rete MQTT...</option>
+    </select>
+
+    <!-- Target chiaro e semantico -->
+    <p>Target: <span id="selectedDevice">nessuno</span></p>
+</div>
+
 
     <!-- TRASMISSIONE E COMANDI -->
     <div class="section">
         <h3>📤 Trasmissione e Comandi</h3>
-        <input id="msg" type="text" placeholder="Scrivi un messaggio...">
+        <input id="msg" type="text" placeholder="Scrivi qui...">
 
         <div class="transmit-buttons">
             <button onclick="publishMessage()">SEND</button>
@@ -44,7 +49,7 @@
             <button id="plotterToggle">PLOTTER</button>
            
             <!-- ⭐ Nuovo pulsante IMPORT PARAM -->
-            <button id="btnImportMqtt">MQTT PARAM</button>
+            <button id="btnMqttParam">MQTT PARAM</button>
         </div>
 
     </div>
