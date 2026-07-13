@@ -389,6 +389,12 @@ function drawPlotter() {
     document.addEventListener("mouseup", () => dragging = false);
 })();
 
+document.getElementById("msg").addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+        publishMessage();
+    }
+});
+
 // ===============================
 // EXPORT
 // ===============================
