@@ -25,6 +25,7 @@ let deviceID = null;
 let deviceName = null;
 
 const announce_topic = "wifi_terminal/announce";
+let discoveredDevices = [];   // <— AGGIUNGERE QUI
 
 let topic_pub = null;   // ESP → UI
 let topic_sub = null;   // UI → ESP
