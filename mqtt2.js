@@ -24,6 +24,8 @@ let mqttReady = false;
 let deviceID = null;
 let deviceName = null;
 
+const announce_topic = "wifi_terminal/announce";
+
 let topic_pub = null;   // ESP → UI
 let topic_sub = null;   // UI → ESP
 let old_topic_pub = null;
