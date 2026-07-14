@@ -92,6 +92,9 @@ function connectMQTT() {
 
         client.subscribe("wifi_terminal/announce");
         console.log("Sottoscritto a: wifi_terminal/announce");
+        client.subscribe("wifi_terminal/bus");
+        console.log("Sottoscritto a: wifi_terminal/bus");
+
 
         if (topic_pub) {
             client.subscribe(topic_pub);
@@ -133,7 +136,42 @@ function connectMQTT() {
 // ---------------------------------------------------------
 function onMessageArrived(topic, payload) {
 
-    // Messaggi dal dispositivo selezionato
+    // ============================
+    // BUS DI MESSAGGI FRA SCHEDE
+    // ============================
+    if (topic === "wifi_terminal/bus") {
+
+        // Formato: SRC>DST:CMD
+        const sep1 = payload.indexOf('>');
+        const sep2 = payload.indexOf(':');
+
+        if (sep1 > 0 && sep2 > sep1) {
+            const src = payload.substring(0, sep1);
+            const dst = payload.substring(sep1 + 1, sep2);
+            const cmd = payload.substring(sep2 + 1);
+
+            // Log remoto
+            if (typeof addMessage === "function") {
+                addMessage(`[BUS] ${payload}`);
+            }
+
+            // Se il messaggio è destinato a questo dispositivo selezionato
+            if (deviceID && dst === deviceID) {
+                console.log("BUS → Comando per il dispositivo selezionato:", cmd);
+            }
+
+            // Se è broadcast
+            if (dst === "*") {
+                console.log("BUS → Broadcast:", cmd);
+            }
+        }
+
+        return;
+    }
+
+    // ============================
+    // MESSAGGI DAL DISPOSITIVO SELEZIONATO
+    // ============================
     if (topic === topic_pub) {
 
         // Dati per il plotter
@@ -144,7 +182,6 @@ function onMessageArrived(topic, payload) {
 
         console.log("RX:", payload);
 
-        // Aggiorna solo il log (lastMessage non esiste più)
         if (typeof addMessage === "function") {
             addMessage(payload);
         }
@@ -152,7 +189,9 @@ function onMessageArrived(topic, payload) {
         return;
     }
 
-    // Annuncio dispositivi
+    // ============================
+    // ANNOUNCE DEI DISPOSITIVI
+    // ============================
     if (topic === announce_topic && payload.startsWith("HELLO:")) {
 
         const parts = payload.split(":");
@@ -288,6 +327,18 @@ window.addEventListener("beforeunload", () => {
         );
     }
 });
+
+
+function sendBus(dst, cmd) {
+    if (!mqttReady) return;
+
+    const msg = `${remoteClientID}>${dst}:${cmd}`;
+    client.publish("wifi_terminal/bus", msg);
+
+    if (typeof addMessage === "function") {
+        addMessage(`[BUS-SENT] ${msg}`);
+    }
+}
 
 
 window.selezionaDispositivo = selezionaDispositivo;
