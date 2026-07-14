@@ -395,6 +395,16 @@ document.getElementById("msg").addEventListener("keydown", (ev) => {
     }
 });
 
+//==================================
+//           HELP
+//=================================
+document.addEventListener("keydown", (e) => {
+    if (e.key === "F1") {
+        e.preventDefault();
+        window.open("help.html", "_blank");
+    }
+});
+
 // ===============================
 // EXPORT
 // ===============================
