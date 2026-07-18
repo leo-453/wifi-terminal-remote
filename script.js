@@ -30,7 +30,7 @@ function updateMessageArea() {
 }
 
 function clearMessageLog() {
-  if (!confirm("Vuoi davvero eliminare lo storico dei messaggi?")) return;
+//  if (!confirm("Vuoi davvero eliminare lo storico dei messaggi?")) return;
   messageBuffer = [];
   updateMessageArea();
 }
