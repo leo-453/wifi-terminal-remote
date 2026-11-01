@@ -240,30 +240,67 @@ document.getElementById("mqttSaveBtn").onclick = () => {
 // HANDLE PLOTTER DATA
 // ===============================
 function handlePlotterData(line) {
+
   if (!plotterRunning) return;
 
-  if (line.startsWith("/")) line = line.substring(1);
+  if (line.startsWith("/")) {
+    line = line.substring(1);
+  }
 
   const parts = line.split("/");
+
+  // Timestamp
   const timestamp = Number(parts[0]);
-  const values = parts.slice(1).map(Number);
 
-  plotterLastValues = values;
+  // Valori per il grafico
+  const values = [];
 
+  // Valori da mostrare nella barra inferiore
+  const displayValues = [];
+
+  // Parsing canali
+  for (let i = 1; i < parts.length; i++) {
+
+    const token = parts[i].trim();
+    const fields = token.split(":");
+
+    // Valore utilizzato dal grafico
+    values.push(Number(fields[0]));
+
+    // Valore visualizzato
+    if (fields.length > 1) {
+      displayValues.push(fields.slice(1).join(":"));
+    } else {
+      displayValues.push(fields[0]);
+    }
+  }
+
+  // Salva i valori mostrati nella barra inferiore
+  plotterLastValues = displayValues;
+
+  // Inizializza buffer se necessario
   if (!Array.isArray(plotterBuf[0])) {
     plotterBuf = values.map(() => []);
   }
 
+  // Aggiorna buffer grafico
   for (let i = 0; i < values.length; i++) {
+
     plotterBuf[i].push(values[i]);
-    if (plotterBuf[i].length > 300) plotterBuf[i].shift();
+
+    if (plotterBuf[i].length > 300) {
+      plotterBuf[i].shift();
+    }
   }
 
+  // Registrazione CSV
   if (plotterRecording) {
     plotterCSV.push(timestamp + "," + values.join(","));
   }
 
-  updatePlotterValues(values);
+  // Aggiorna visualizzazione valori
+  updatePlotterValues(displayValues);
+
   drawPlotter();
 }
 
