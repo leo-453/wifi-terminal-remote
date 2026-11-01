@@ -309,7 +309,7 @@ function handlePlotterData(line) {
 // HANDLE PLOTTER DATA EXTENDED
 // ===============================
 function handlePlotterData(line) {
-
+console.log("NUOVO PARSER ATTIVO");
   if (!plotterRunning) return;
 
   if (line.startsWith("/")) {
