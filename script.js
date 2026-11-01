@@ -382,6 +382,7 @@ function updatePlotterValues(values) {
   const colors = ["red", "cyan", "yellow", "lime"];
   let html = "";
 
+  console.log("UPDATE:", values);
   values.forEach((v, i) => {
     html += `<span style="color:${colors[i]}; margin-right:12px;">${v}</span>`;
   });
