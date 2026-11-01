@@ -366,11 +366,12 @@ function handlePlotterData(line) {
   if (plotterRecording) {
     plotterCSV.push(timestamp + "," + values.join(","));
   }
-
-  // Aggiorna visualizzazione valori
-  updatePlotterValues(displayValues);
+  
   console.log("values=", values);
 console.log("displayValues=", displayValues);
+  // Aggiorna visualizzazione valori
+  updatePlotterValues(displayValues);
+
 
   drawPlotter();
 }
