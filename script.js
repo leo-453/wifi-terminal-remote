@@ -369,6 +369,8 @@ function handlePlotterData(line) {
 
   // Aggiorna visualizzazione valori
   updatePlotterValues(displayValues);
+  console.log("values=", values);
+console.log("displayValues=", displayValues);
 
   drawPlotter();
 }
